@@ -55,11 +55,13 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       title: 'Lazy1922',
       theme: ThemeData(
         appBarTheme: AppBarTheme(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          titleTextStyle: Theme.of(context).textTheme.headline6,
-          elevation: 0,
-          centerTitle: true,
-        ),
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            titleTextStyle: Theme.of(context).textTheme.headline6,
+            elevation: 0,
+            centerTitle: true,
+            iconTheme: IconThemeData(
+              color: Theme.of(context).textTheme.headline6!.color,
+            )),
         primarySwatch: Colors.teal,
         cardTheme: CardTheme(
           shape: RoundedRectangleBorder(

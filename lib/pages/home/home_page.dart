@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lazy1922/models/lazy_error.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/providers/data_provider.dart';
+import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:lazy1922/widgets/ccpi.dart';
 import 'package:tuple/tuple.dart';
@@ -136,41 +138,48 @@ class RecommendationCard extends ConsumerWidget {
   }
 }
 
-class PlaceCard extends StatelessWidget {
+class PlaceCard extends ConsumerWidget {
   final Place place;
   const PlaceCard({Key? key, required this.place}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 140,
-      width: double.infinity,
-      child: Card(
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: InkWell(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  place.name,
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  place.code.formatted,
-                  style: Theme.of(context).textTheme.caption!.copyWith(
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                ),
-              ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isEditMode = ref.watch(isEditModeProvider);
+    return ShakeWidget(
+      duration: const Duration(seconds: 1),
+      shakeConstant: ShakeLittleConstant1(),
+      autoPlay: isEditMode,
+      enableWebMouseHover: true,
+      child: SizedBox(
+        height: 140,
+        width: double.infinity,
+        child: Card(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          child: InkWell(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    place.name,
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    place.code.formatted,
+                    style: Theme.of(context).textTheme.caption!.copyWith(
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                  ),
+                ],
+              ),
             ),
+            onTap: () => sendMessage(place.message),
           ),
-          onTap: () => sendMessage(place.message),
         ),
       ),
     );

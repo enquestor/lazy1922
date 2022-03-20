@@ -7,6 +7,7 @@ import 'package:lazy1922/pages/home/home_page.dart';
 import 'package:lazy1922/pages/home/scan_page.dart';
 import 'package:lazy1922/pages/home/settings_page.dart';
 import 'package:lazy1922/providers/data_provider.dart';
+import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 
 final _rawPageIndexProvider = StateProvider.autoDispose<int>((ref) => 0);
@@ -27,6 +28,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pageIndex = ref.watch(_pageIndexProvider);
+    final isEditMode = ref.watch(isEditModeProvider);
     return Scaffold(
       appBar: _buildAppBar(ref),
       body: _buildBody(ref),
@@ -34,7 +36,7 @@ class HomeScreen extends ConsumerWidget {
       floatingActionButton: pageIndex == 0
           ? FloatingActionButton(
               onPressed: () => _onFabPressed(context, ref),
-              child: const Icon(Icons.add),
+              child: isEditMode ? const Icon(Icons.close) : const Icon(Icons.edit),
             )
           : null,
     );
@@ -105,6 +107,16 @@ class HomeScreen extends ConsumerWidget {
   }
 
   void _onFabPressed(BuildContext context, WidgetRef ref) async {
+    final isEditMode = ref.watch(isEditModeProvider);
+    final isEditModeNotifier = ref.read(isEditModeProvider.notifier);
+    if (isEditMode) {
+      isEditModeNotifier.state = false;
+    } else {
+      isEditModeNotifier.state = true;
+    }
+  }
+
+  void _addPlaceHandler(BuildContext context, WidgetRef ref) async {
     final data = ref.read(dataProvider);
     if (data.records.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
