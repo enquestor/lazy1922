@@ -5,12 +5,7 @@ import 'package:lazy1922/models/record.dart';
 class RecordsNotifier extends StateNotifier<List<Record>> {
   Box<Record> get box => Hive.box<Record>("records");
 
-  RecordsNotifier() : super(Hive.box<Record>("records").values.toList()) {
-    final box = Hive.box<Record>("records");
-    box.listenable().addListener(() {
-      state = box.values.toList();
-    });
-  }
+  RecordsNotifier() : super(Hive.box<Record>("records").values.toList());
 
   void add(Record record) {
     box.add(record);
