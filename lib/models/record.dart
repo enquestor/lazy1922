@@ -34,4 +34,19 @@ class Record {
       "longitude": longitude,
     };
   }
+
+  // override equal operator
+  @override
+  bool operator ==(Object other) {
+    if (other is! Record) {
+      return false;
+    } else if (identical(this, other)) {
+      return true;
+    } else {
+      return code == other.code;
+    }
+  }
+
+  @override
+  int get hashCode => code.hashCode;
 }

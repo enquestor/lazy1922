@@ -35,6 +35,7 @@ class Place extends Record {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       "code": code.value,
@@ -45,4 +46,18 @@ class Place extends Record {
       "name": name,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! Record) {
+      return false;
+    } else if (identical(this, other)) {
+      return true;
+    } else {
+      return code == other.code;
+    }
+  }
+
+  @override
+  int get hashCode => code.hashCode;
 }

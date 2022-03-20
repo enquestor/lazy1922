@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_reorderable_grid_view/widgets/reorderable_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:lazy1922/models/lazy_error.dart';
 import 'package:lazy1922/models/place.dart';
+import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/providers/data_provider.dart';
+import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:lazy1922/widgets/ccpi.dart';
 import 'package:tuple/tuple.dart';
@@ -15,7 +19,8 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(dataProvider);
-
+    final isEditMode = ref.watch(isEditModeProvider);
+    final children = List<Widget>.from(data.places.map((place) => PlaceCard(key: Key(place.code.value), place: place)).toList());
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
@@ -26,14 +31,32 @@ class HomePage extends ConsumerWidget {
             const RecommendationCard(),
             const SizedBox(height: 32),
             const HomeTitle(title: 'Favorites'),
-            MasonryGridView.count(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              itemCount: data.places.length,
-              itemBuilder: (context, index) => PlaceCard(place: data.places[index]),
+            ReorderableBuilder(
+              lockedIndices: [children.length],
+              enableDraggable: isEditMode,
+              enableLongPress: true,
+              dragChildBoxDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              children: [
+                ...children,
+                const AddCard(key: Key('addCard')),
+              ],
+              onReorder: (orderUpdateEntities) {
+                // TODO: update underlying list
+              },
+              builder: (children, scrollController) => GridView(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                controller: scrollController,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.4,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                children: children,
+              ),
             ),
           ],
         ),
@@ -136,43 +159,174 @@ class RecommendationCard extends ConsumerWidget {
   }
 }
 
-class PlaceCard extends StatelessWidget {
+class PlaceCard extends ConsumerWidget {
   final Place place;
   const PlaceCard({Key? key, required this.place}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 140,
-      width: double.infinity,
-      child: Card(
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: InkWell(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  place.name,
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  place.code.formatted,
-                  style: Theme.of(context).textTheme.caption!.copyWith(
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                ),
-              ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isEditMode = ref.watch(isEditModeProvider);
+    return ShakeWidget(
+      duration: const Duration(seconds: 1),
+      shakeConstant: ShakeLittleConstant1(),
+      autoPlay: isEditMode,
+      enableWebMouseHover: true,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Card(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          child: InkWell(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    place.name,
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    place.code.formatted,
+                    style: Theme.of(context).textTheme.caption!.copyWith(
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                  ),
+                ],
+              ),
             ),
+            onTap: () => _onCardTap(context, isEditMode),
           ),
-          onTap: () => sendMessage(place.message),
         ),
       ),
+    );
+  }
+
+  void _onCardTap(BuildContext context, bool isEditMode) {
+    if (isEditMode) {
+      _editPlace(context);
+    } else {
+      sendMessage(place.message);
+    }
+  }
+
+  void _editPlace(BuildContext context) {}
+}
+
+class AddCard extends ConsumerWidget {
+  const AddCard({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isEditMode = ref.watch(isEditModeProvider);
+    return Visibility(
+      visible: isEditMode,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Card(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          child: InkWell(
+            child: const Center(
+              child: Icon(Icons.add),
+            ),
+            onTap: () => _addPlace(context, ref),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _addPlace(BuildContext context, WidgetRef ref) async {
+    final data = ref.read(dataProvider);
+    if (data.records.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Scan a QR code first, then press add to add it to favorites.'),
+        ),
+      );
+      return;
+    }
+
+    final selectedRecordIndex = await showDialog<int>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Add to Favorites'),
+        children: data.records
+            .asMap()
+            .entries
+            .map(
+              (entry) => RecordOption(
+                record: entry.value,
+                onTap: () => Navigator.of(context).pop(entry.key),
+              ),
+            )
+            .toList(),
+      ),
+    );
+
+    if (selectedRecordIndex == null) {
+      return;
+    }
+
+    final controller = TextEditingController();
+    final placeName = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('New Place'),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: 'Enter a name for this place',
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text('Add'),
+            onPressed: () => Navigator.of(context).pop(controller.text),
+          ),
+        ],
+      ),
+    );
+
+    if (placeName == null) {
+      return;
+    }
+
+    final record = data.records[selectedRecordIndex];
+    final dataNotifier = ref.read(dataProvider.notifier);
+    dataNotifier.addPlace(Place.fromRecord(record, placeName));
+    dataNotifier.deleteRecord(record);
+  }
+}
+
+class RecordOption extends StatelessWidget {
+  final Record record;
+  final void Function() onTap;
+  const RecordOption({Key? key, required this.record, required this.onTap}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Text(DateFormat('M/d - hh:mm a').format(record.time)),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Text(record.code.formatted),
+      ),
+      onTap: () => Navigator.of(context).pop(0),
     );
   }
 }

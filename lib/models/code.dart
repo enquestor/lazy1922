@@ -15,4 +15,18 @@ class Code {
 
   @override
   String toString() => value;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! Code) {
+      return false;
+    } else if (identical(this, other)) {
+      return true;
+    } else {
+      return value == other.value;
+    }
+  }
+
+  @override
+  int get hashCode => value.hashCode;
 }
