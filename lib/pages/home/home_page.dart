@@ -7,8 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:lazy1922/models/lazy_error.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
-import 'package:lazy1922/providers/data_provider.dart';
 import 'package:lazy1922/providers/is_edit_mode_provider.dart';
+import 'package:lazy1922/providers/places_provider.dart';
+import 'package:lazy1922/providers/records_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:lazy1922/widgets/ccpi.dart';
 import 'package:tuple/tuple.dart';
@@ -18,9 +19,9 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final data = ref.watch(dataProvider);
     final isEditMode = ref.watch(isEditModeProvider);
-    final children = List<Widget>.from(data.places.map((place) => PlaceCard(key: Key(place.code.value), place: place)).toList());
+    final places = ref.watch(placesProvider);
+    final children = List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.code.value), place: place)).toList());
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
@@ -84,19 +85,19 @@ class HomeTitle extends StatelessWidget {
 }
 
 final _recommendedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
-  final data = ref.watch(dataProvider);
-  if (data.places.isEmpty) {
+  final places = ref.watch(placesProvider);
+  if (places.isEmpty) {
     throw LazyError.noSavedPlaces;
   }
 
   final location = await getLocation();
-  data.places.sort((a, b) {
+  places.sort((a, b) {
     final distanceA = Geolocator.distanceBetween(a.latitude, a.longitude, location.latitude, location.longitude);
     final distanceB = Geolocator.distanceBetween(b.latitude, b.longitude, location.latitude, location.longitude);
     return distanceA.compareTo(distanceB);
   });
 
-  final recommendedPlace = data.places.first;
+  final recommendedPlace = places.first;
   final distance = Geolocator.distanceBetween(recommendedPlace.latitude, recommendedPlace.longitude, location.latitude, location.longitude);
   return Tuple2(recommendedPlace, distance);
 });
@@ -240,8 +241,8 @@ class AddCard extends ConsumerWidget {
   }
 
   void _addPlace(BuildContext context, WidgetRef ref) async {
-    final data = ref.read(dataProvider);
-    if (data.records.isEmpty) {
+    final records = ref.watch(recordsProvider);
+    if (records.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Scan a QR code first, then press add to add it to favorites.'),
@@ -250,11 +251,11 @@ class AddCard extends ConsumerWidget {
       return;
     }
 
-    final selectedRecordIndex = await showDialog<int>(
+    final recordIndex = await showDialog<int>(
       context: context,
       builder: (context) => SimpleDialog(
         title: const Text('Add to Favorites'),
-        children: data.records
+        children: records
             .asMap()
             .entries
             .map(
@@ -267,7 +268,7 @@ class AddCard extends ConsumerWidget {
       ),
     );
 
-    if (selectedRecordIndex == null) {
+    if (recordIndex == null) {
       return;
     }
 
@@ -303,10 +304,10 @@ class AddCard extends ConsumerWidget {
       return;
     }
 
-    final record = data.records[selectedRecordIndex];
-    final dataNotifier = ref.read(dataProvider.notifier);
-    dataNotifier.addPlace(Place.fromRecord(record, placeName));
-    dataNotifier.deleteRecord(record);
+    final recordsNotifier = ref.read(recordsProvider.notifier);
+    final placesNotifer = ref.read(placesProvider.notifier);
+    placesNotifer.add(Place.fromRecord(records[recordIndex], placeName));
+    recordsNotifier.deleteAt(recordIndex);
   }
 }
 

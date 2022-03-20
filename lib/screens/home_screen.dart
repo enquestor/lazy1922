@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:lazy1922/models/place.dart';
-import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/pages/home/home_page.dart';
 import 'package:lazy1922/pages/home/scan_page.dart';
 import 'package:lazy1922/pages/home/settings_page.dart';
-import 'package:lazy1922/providers/data_provider.dart';
 import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 

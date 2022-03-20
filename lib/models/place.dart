@@ -1,7 +1,12 @@
+import 'package:hive/hive.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/record.dart';
 
+part 'place.g.dart';
+
+@HiveType(typeId: 1)
 class Place extends Record {
+  @HiveField(5)
   final String name;
 
   const Place({

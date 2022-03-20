@@ -1,12 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_sms/flutter_sms.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/record.dart';
-import 'package:lazy1922/providers/data_provider.dart';
 import 'package:lazy1922/providers/last_scan_time_provider.dart';
+import 'package:lazy1922/providers/places_provider.dart';
+import 'package:lazy1922/providers/records_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -56,7 +54,8 @@ class ScanPage extends ConsumerWidget {
 
     try {
       final location = await getLocation();
-      final data = await ref.read(dataProvider);
+      final records = ref.read(recordsProvider);
+      final places = ref.read(placesProvider);
       final record = Record(
         code: Code.parse(message),
         message: message,
@@ -65,9 +64,9 @@ class ScanPage extends ConsumerWidget {
         time: DateTime.now(),
       );
 
-      if (!data.records.contains(record) && !data.places.contains(record)) {
-        final dataNotifier = ref.read(dataProvider.notifier);
-        dataNotifier.addRecord(record);
+      if (!records.contains(record) && !places.contains(record)) {
+        final recordsNotifier = ref.read(recordsProvider.notifier);
+        recordsNotifier.add(record);
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(

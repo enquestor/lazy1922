@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lazy1922/providers/data_provider.dart';
-import 'package:lazy1922/providers/user_provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lazy1922/models/code.dart';
+import 'package:lazy1922/models/place.dart';
+import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/routes.dart';
 import 'package:lazy1922/screens/home_screen.dart';
 import 'package:vrouter/vrouter.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  await Future.wait([
+    Hive.openBox<Record>("records"),
+    Hive.openBox<Place>("places"),
+  ]);
+  Hive.registerAdapter(RecordAdapter());
+  Hive.registerAdapter(PlaceAdapter());
+  Hive.registerAdapter(CodeAdapter());
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -39,10 +48,10 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.paused:
-        final userNotifier = ref.read(userProvider.notifier);
-        final dataNotifier = ref.read(dataProvider.notifier);
-        userNotifier.save();
-        dataNotifier.save();
+        // final userNotifier = ref.read(userProvider.notifier);
+        // final dataNotifier = ref.read(dataProvider.notifier);
+        // userNotifier.save();
+        // dataNotifier.save();
         break;
       default:
         break;
@@ -87,7 +96,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       routes: [
         VWidget(
           path: Routes.home,
-          widget: HomeScreen(),
+          widget: const HomeScreen(),
         )
       ],
     );

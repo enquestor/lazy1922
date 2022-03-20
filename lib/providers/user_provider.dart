@@ -1,8 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:lazy1922/models/default_page.dart';
-import 'package:lazy1922/models/location_mode.dart';
-import 'package:lazy1922/models/location_sensitivity.dart';
 import 'package:lazy1922/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

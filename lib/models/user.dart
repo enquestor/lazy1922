@@ -1,7 +1,3 @@
-import 'package:lazy1922/models/default_page.dart';
-import 'package:lazy1922/models/location_mode.dart';
-import 'package:lazy1922/models/location_sensitivity.dart';
-
 class User {
   final bool initialized;
   final bool isPro;
