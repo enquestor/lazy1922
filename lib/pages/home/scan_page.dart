@@ -56,16 +56,19 @@ class ScanPage extends ConsumerWidget {
 
     try {
       final location = await getLocation();
-      final dataNotifier = ref.read(dataProvider.notifier);
-      dataNotifier.addRecord(
-        Record(
-          code: Code.parse(message),
-          message: message,
-          latitude: location.latitude,
-          longitude: location.longitude,
-          time: DateTime.now(),
-        ),
+      final data = await ref.read(dataProvider);
+      final record = Record(
+        code: Code.parse(message),
+        message: message,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        time: DateTime.now(),
       );
+
+      if (!data.records.contains(record) && !data.places.contains(record)) {
+        final dataNotifier = ref.read(dataProvider.notifier);
+        dataNotifier.addRecord(record);
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.toString())),

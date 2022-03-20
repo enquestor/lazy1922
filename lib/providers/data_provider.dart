@@ -41,6 +41,12 @@ class DataNotifier extends StateNotifier<Data> {
     );
   }
 
+  void deleteRecord(Record record) {
+    state = state.copyWith(
+      records: state.records.where((r) => r != record).toList(),
+    );
+  }
+
   void addPlace(Place place) {
     state = state.copyWith(
       places: [place] + state.places,
