@@ -34,7 +34,6 @@ dependencies:
   qr_code_scanner: ^0.7.0
   flutter_sms: ^2.3.2
   path_provider: ^2.0.9
-  shared_preferences: ^2.0.13
   geolocator: ^8.2.0
   skeletons: ^0.0.3
   tuple: ^2.0.0

@@ -4,19 +4,22 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
+import 'package:lazy1922/models/user.dart';
 import 'package:lazy1922/routes.dart';
 import 'package:lazy1922/screens/home_screen.dart';
 import 'package:vrouter/vrouter.dart';
 
 void main() async {
   await Hive.initFlutter();
-  await Future.wait([
-    Hive.openBox<Record>("records"),
-    Hive.openBox<Place>("places"),
-  ]);
   Hive.registerAdapter(RecordAdapter());
   Hive.registerAdapter(PlaceAdapter());
   Hive.registerAdapter(CodeAdapter());
+  Hive.registerAdapter(UserAdapter());
+  await Future.wait([
+    Hive.openBox<Record>("records"),
+    Hive.openBox<Place>("places"),
+    Hive.openBox<User>("users"),
+  ]);
   runApp(
     const ProviderScope(
       child: MyApp(),
