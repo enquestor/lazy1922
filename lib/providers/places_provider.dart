@@ -12,7 +12,7 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
     state = box.values.toList();
   }
 
-  void remove(int index) {
+  void deleteAt(int index) {
     box.deleteAt(index);
     state = box.values.toList();
   }
