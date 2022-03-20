@@ -20,14 +20,14 @@ class SettingsItem extends StatelessWidget {
           padding: const EdgeInsets.only(left: 8),
           child: Text(
             title,
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
           ),
         ),
         subtitle: value == null
             ? null
             : Padding(
                 padding: const EdgeInsets.only(left: 8, top: 4),
-                child: Text(value!, style: TextStyle(fontSize: 16)),
+                child: Text(value!, style: const TextStyle(fontSize: 16)),
               ),
         onTap: onTap,
       ),

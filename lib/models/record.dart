@@ -1,10 +1,19 @@
 import 'package:lazy1922/models/code.dart';
+import 'package:hive/hive.dart';
 
+part 'record.g.dart';
+
+@HiveType(typeId: 0)
 class Record {
+  @HiveField(0)
   final Code code;
+  @HiveField(1)
   final String message;
+  @HiveField(2)
   final DateTime time;
+  @HiveField(3)
   final double latitude;
+  @HiveField(4)
   final double longitude;
 
   const Record({

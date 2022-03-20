@@ -1,4 +1,10 @@
+import 'package:hive/hive.dart';
+
+part 'code.g.dart';
+
+@HiveType(typeId: 2)
 class Code {
+  @HiveField(0)
   String value;
 
   Code(this.value);
