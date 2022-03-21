@@ -1,4 +1,4 @@
-enum Page {
+enum SelectedPage {
   home,
   scan,
   settings,
