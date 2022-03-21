@@ -83,7 +83,7 @@ class HomePage extends ConsumerWidget {
   Expanded _buildAddPlaceGuide() {
     return const Expanded(
       child: Center(
-        child: Text('To add to your favorites:\n\n1. Scan a QR code first.\n2. Tap the plus button.\n3. Give it a name, and you\'re done!'),
+        child: Text('To add to your favorites:\n\n1. Scan a QR code first.\n2. Tap the edit button.\n3. Tap the plus card.\n4. Give it a name, and you\'re done!'),
       ),
     );
   }
