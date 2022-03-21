@@ -7,9 +7,11 @@ import 'package:intl/intl.dart';
 import 'package:lazy1922/models/lazy_error.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
+import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/records_provider.dart';
+import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:lazy1922/widgets/ccpi.dart';
 import 'package:tuple/tuple.dart';
@@ -121,7 +123,7 @@ class RecommendationCard extends ConsumerWidget {
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: recommendedPlace.when(
           data: (data) => _buildRecommendationCard(context, data.item1, data.item2),
-          error: (error, _) => _buildScanCard(),
+          error: (error, _) => _buildScanCard(ref),
           loading: () => const CCPI(),
         ),
       ),
@@ -164,10 +166,11 @@ class RecommendationCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildScanCard() {
+  Widget _buildScanCard(WidgetRef ref) {
+    final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
     return InkWell(
       child: const Icon(Icons.camera_alt_outlined, color: Colors.white),
-      onTap: () => {},
+      onTap: () => selectedPageNotifier.state = SelectedPage.scan,
     );
   }
 }
