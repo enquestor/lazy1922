@@ -21,7 +21,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isEditMode = ref.watch(isEditModeProvider);
     final places = ref.watch(placesProvider);
-    final children = List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.code.value), place: place)).toList());
+    final children = List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList());
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
@@ -29,7 +29,7 @@ class HomePage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const HomeTitle(title: 'Recommendation'),
-            const RecommendationCard(),
+            // const RecommendationCard(),
             const SizedBox(height: 32),
             const HomeTitle(title: 'Favorites'),
             ReorderableBuilder(
@@ -44,7 +44,10 @@ class HomePage extends ConsumerWidget {
                 const AddCard(key: Key('addCard')),
               ],
               onReorder: (orderUpdateEntities) {
-                // TODO: update underlying list
+                final placesNotifer = ref.read(placesProvider.notifier);
+                for (var entity in orderUpdateEntities) {
+                  placesNotifer.move(entity.oldIndex, entity.newIndex);
+                }
               },
               builder: (children, scrollController) => GridView(
                 physics: const NeverScrollableScrollPhysics(),
@@ -242,7 +245,9 @@ class AddCard extends ConsumerWidget {
 
   void _addPlace(BuildContext context, WidgetRef ref) async {
     final records = ref.watch(recordsProvider);
-    if (records.isEmpty) {
+    final places = ref.watch(placesProvider);
+    final availableRecords = records.where((record) => !places.contains(record)).toList();
+    if (availableRecords.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Scan a QR code first, then press add to add it to favorites.'),
@@ -251,11 +256,11 @@ class AddCard extends ConsumerWidget {
       return;
     }
 
-    final recordIndex = await showDialog<int>(
+    final index = await showDialog<int>(
       context: context,
       builder: (context) => SimpleDialog(
         title: const Text('Add to Favorites'),
-        children: records
+        children: availableRecords
             .asMap()
             .entries
             .map(
@@ -268,7 +273,7 @@ class AddCard extends ConsumerWidget {
       ),
     );
 
-    if (recordIndex == null) {
+    if (index == null) {
       return;
     }
 
@@ -304,10 +309,8 @@ class AddCard extends ConsumerWidget {
       return;
     }
 
-    final recordsNotifier = ref.read(recordsProvider.notifier);
     final placesNotifer = ref.read(placesProvider.notifier);
-    placesNotifer.add(Place.fromRecord(records[recordIndex], placeName));
-    recordsNotifier.deleteAt(recordIndex);
+    placesNotifer.add(Place.fromRecord(availableRecords[index], placeName));
   }
 }
 

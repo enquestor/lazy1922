@@ -4,7 +4,7 @@ import 'package:lazy1922/models/record.dart';
 
 part 'place.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 2)
 class Place extends Record {
   @HiveField(5)
   final String name;
@@ -16,7 +16,13 @@ class Place extends Record {
     required double latitude,
     required double longitude,
     required this.name,
-  }) : super(code: code, message: message, time: time, latitude: latitude, longitude: longitude);
+  }) : super(
+          code: code,
+          message: message,
+          time: time,
+          latitude: latitude,
+          longitude: longitude,
+        );
 
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(

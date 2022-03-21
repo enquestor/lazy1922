@@ -3,18 +3,21 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lazy1922/models/record.dart';
 
 class RecordsNotifier extends StateNotifier<List<Record>> {
-  Box<Record> get box => Hive.box<Record>("records");
+  Box<List> get box => Hive.box<List>("records");
 
-  RecordsNotifier() : super(Hive.box<Record>("records").values.toList());
+  RecordsNotifier() : super((Hive.box<List>("records").get('records') ?? []).cast<Record>());
 
-  void add(Record record) {
-    box.add(record);
-    state = box.values.toList();
+  @override
+  bool updateShouldNotify(List<Record> old, List<Record> current) => true;
+
+  @override
+  set state(List<Record> value) {
+    super.state = value;
+    box.put('records', value);
   }
 
-  void deleteAt(int index) {
-    box.deleteAt(index);
-    state = box.values.toList();
+  Future<void> add(Record record) async {
+    state = state..add(record);
   }
 }
 

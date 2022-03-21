@@ -3,18 +3,32 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lazy1922/models/place.dart';
 
 class PlacesNotifier extends StateNotifier<List<Place>> {
-  Box<Place> get box => Hive.box<Place>("places");
+  Box<List> get box => Hive.box<List>("places");
 
-  PlacesNotifier() : super(Hive.box<Place>("places").values.toList());
+  PlacesNotifier() : super((Hive.box<List>("places").get('places') ?? []).cast<Place>());
 
-  void add(Place place) {
-    box.add(place);
-    state = box.values.toList();
+  @override
+  bool updateShouldNotify(List<Place> old, List<Place> current) => true;
+
+  @override
+  set state(List<Place> value) {
+    super.state = value;
+    box.put('places', value);
   }
 
-  void deleteAt(int index) {
-    box.deleteAt(index);
-    state = box.values.toList();
+  Future<void> add(Place place) async {
+    state = state..add(place);
+  }
+
+  Future<void> removeAt(int index) async {
+    state = state..removeAt(index);
+  }
+
+  Future<void> move(int oldIndex, int newIndex) async {
+    final place = state[oldIndex];
+    state = state
+      ..removeAt(oldIndex)
+      ..insert(newIndex, place);
   }
 }
 

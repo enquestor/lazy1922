@@ -8,7 +8,7 @@ part of 'place.dart';
 
 class PlaceAdapter extends TypeAdapter<Place> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   Place read(BinaryReader reader) {
