@@ -29,7 +29,7 @@ class HomePage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const HomeTitle(title: 'Recommendation'),
-            // const RecommendationCard(),
+            const RecommendationCard(),
             const SizedBox(height: 32),
             const HomeTitle(title: 'Favorites'),
             ReorderableBuilder(
@@ -44,9 +44,9 @@ class HomePage extends ConsumerWidget {
                 const AddCard(key: Key('addCard')),
               ],
               onReorder: (orderUpdateEntities) {
-                final placesNotifer = ref.read(placesProvider.notifier);
+                final placesNotifier = ref.read(placesProvider.notifier);
                 for (var entity in orderUpdateEntities) {
-                  placesNotifer.move(entity.oldIndex, entity.newIndex);
+                  placesNotifier.move(entity.oldIndex, entity.newIndex);
                 }
               },
               builder: (children, scrollController) => GridView(
@@ -88,7 +88,9 @@ class HomeTitle extends StatelessWidget {
 }
 
 final _recommendedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
-  final places = ref.watch(placesProvider);
+  // use toList to make full copy so that sort doesn't mess with provided list
+  final places = ref.watch(placesProvider).toList();
+
   if (places.isEmpty) {
     throw LazyError.noSavedPlaces;
   }
@@ -309,8 +311,8 @@ class AddCard extends ConsumerWidget {
       return;
     }
 
-    final placesNotifer = ref.read(placesProvider.notifier);
-    placesNotifer.add(Place.fromRecord(availableRecords[index], placeName));
+    final placesNotifier = ref.read(placesProvider.notifier);
+    placesNotifier.add(Place.fromRecord(availableRecords[index], placeName));
   }
 }
 
