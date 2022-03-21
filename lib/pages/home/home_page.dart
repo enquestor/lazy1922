@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/lazy_error.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
@@ -121,15 +120,15 @@ class RecommendationCard extends ConsumerWidget {
         color: Theme.of(context).colorScheme.primary,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: recommendedPlace.when(
-          data: (data) => _buildRecommendation(context, data.item1, data.item2),
-          error: (error, _) => Center(child: Text(error.toString(), style: const TextStyle(color: Colors.white))),
+          data: (data) => _buildRecommendationCard(context, data.item1, data.item2),
+          error: (error, _) => _buildScanCard(),
           loading: () => const CCPI(),
         ),
       ),
     );
   }
 
-  Widget _buildRecommendation(BuildContext context, Place place, double distance) {
+  Widget _buildRecommendationCard(BuildContext context, Place place, double distance) {
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -162,6 +161,13 @@ class RecommendationCard extends ConsumerWidget {
         ),
       ),
       onTap: () => sendMessage(place.message),
+    );
+  }
+
+  Widget _buildScanCard() {
+    return InkWell(
+      child: const Icon(Icons.camera_alt_outlined, color: Colors.white),
+      onTap: () => {},
     );
   }
 }
