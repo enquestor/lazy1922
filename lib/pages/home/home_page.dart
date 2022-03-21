@@ -21,51 +21,69 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final places = ref.watch(placesProvider);
+    final isEditMode = ref.watch(isEditModeProvider);
+    final showAddPlaceGuide = places.isEmpty && !isEditMode;
+    final child = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const HomeTitle(title: 'Recommendation'),
+          const RecommendationCard(),
+          const SizedBox(height: 32),
+          const HomeTitle(title: 'Favorites'),
+          showAddPlaceGuide ? _buildAddPlaceGuide() : _buildPlacesList(ref),
+        ],
+      ),
+    );
+    if (showAddPlaceGuide) {
+      return child;
+    } else {
+      return SingleChildScrollView(child: child);
+    }
+  }
+
+  Widget _buildPlacesList(WidgetRef ref) {
     final isEditMode = ref.watch(isEditModeProvider);
     final places = ref.watch(placesProvider);
     final children = List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList());
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const HomeTitle(title: 'Recommendation'),
-            const RecommendationCard(),
-            const SizedBox(height: 32),
-            const HomeTitle(title: 'Favorites'),
-            ReorderableBuilder(
-              lockedIndices: [children.length],
-              enableDraggable: isEditMode,
-              enableLongPress: true,
-              dragChildBoxDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              children: [
-                ...children,
-                const AddCard(key: Key('addCard')),
-              ],
-              onReorder: (orderUpdateEntities) {
-                final placesNotifier = ref.read(placesProvider.notifier);
-                for (var entity in orderUpdateEntities) {
-                  placesNotifier.move(entity.oldIndex, entity.newIndex);
-                }
-              },
-              builder: (children, scrollController) => GridView(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                controller: scrollController,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1.4,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 4,
-                ),
-                children: children,
-              ),
-            ),
-          ],
+    return ReorderableBuilder(
+      lockedIndices: [children.length],
+      enableDraggable: isEditMode,
+      enableLongPress: true,
+      dragChildBoxDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      children: [
+        ...children,
+        const AddCard(key: Key('addCard')),
+      ],
+      onReorder: (orderUpdateEntities) {
+        final placesNotifier = ref.read(placesProvider.notifier);
+        for (var entity in orderUpdateEntities) {
+          placesNotifier.move(entity.oldIndex, entity.newIndex);
+        }
+      },
+      builder: (children, scrollController) => GridView(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        controller: scrollController,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.4,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 4,
         ),
+        children: children,
+      ),
+    );
+  }
+
+  Expanded _buildAddPlaceGuide() {
+    return const Expanded(
+      child: Center(
+        child: Text('You have to fucking add a place.'),
       ),
     );
   }
