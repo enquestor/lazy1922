@@ -27,13 +27,53 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         ),
         const SettingsTitle(title: 'Pro Features'),
         SettingsItem(
-          title: 'Backup and Restore',
+          title: 'Recommendation Range',
           onTap: user.isPro ? () => {} : null,
         ),
         const SettingsTitle(title: 'About'),
         SettingsItem(
-          title: 'About Lazy1922',
-          onTap: () => {},
+          title: 'Privacy Policy',
+          onTap: () => showDialog(context: context, builder: (context) => const PrivacyDialog()),
+        ),
+        SettingsItem(
+          title: 'About',
+          onTap: () => showDialog(context: context, builder: (context) => const AboutDialog()),
+        ),
+      ],
+    );
+  }
+}
+
+class PrivacyDialog extends StatelessWidget {
+  const PrivacyDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Privacy Policy'),
+      content: const Text('Lazy1922 only uses your GPS and stores all data locally. No data is sent to the server.'),
+      actions: [
+        TextButton(
+          child: const Text('OK'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ],
+    );
+  }
+}
+
+class AboutDialog extends StatelessWidget {
+  const AboutDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('About'),
+      content: const Text('Lazy1922 is a tool to help you scan 1922 SMS messages.'),
+      actions: [
+        TextButton(
+          child: const Text('OK'),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ],
     );

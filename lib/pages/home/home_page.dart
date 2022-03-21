@@ -4,13 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/lazy_error.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
+import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/records_provider.dart';
+import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:lazy1922/widgets/ccpi.dart';
 import 'package:tuple/tuple.dart';
@@ -20,51 +21,69 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final places = ref.watch(placesProvider);
+    final isEditMode = ref.watch(isEditModeProvider);
+    final showAddPlaceGuide = places.isEmpty && !isEditMode;
+    final child = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const HomeTitle(title: 'Recommendation'),
+          const RecommendationCard(),
+          const SizedBox(height: 32),
+          const HomeTitle(title: 'Favorites'),
+          showAddPlaceGuide ? _buildAddPlaceGuide() : _buildPlacesList(ref),
+        ],
+      ),
+    );
+    if (showAddPlaceGuide) {
+      return child;
+    } else {
+      return SingleChildScrollView(child: child);
+    }
+  }
+
+  Widget _buildPlacesList(WidgetRef ref) {
     final isEditMode = ref.watch(isEditModeProvider);
     final places = ref.watch(placesProvider);
     final children = List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList());
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const HomeTitle(title: 'Recommendation'),
-            const RecommendationCard(),
-            const SizedBox(height: 32),
-            const HomeTitle(title: 'Favorites'),
-            ReorderableBuilder(
-              lockedIndices: [children.length],
-              enableDraggable: isEditMode,
-              enableLongPress: true,
-              dragChildBoxDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              children: [
-                ...children,
-                const AddCard(key: Key('addCard')),
-              ],
-              onReorder: (orderUpdateEntities) {
-                final placesNotifier = ref.read(placesProvider.notifier);
-                for (var entity in orderUpdateEntities) {
-                  placesNotifier.move(entity.oldIndex, entity.newIndex);
-                }
-              },
-              builder: (children, scrollController) => GridView(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                controller: scrollController,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1.4,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 4,
-                ),
-                children: children,
-              ),
-            ),
-          ],
+    return ReorderableBuilder(
+      lockedIndices: [children.length],
+      enableDraggable: isEditMode,
+      enableLongPress: true,
+      dragChildBoxDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      children: [
+        ...children,
+        const AddCard(key: Key('addCard')),
+      ],
+      onReorder: (orderUpdateEntities) {
+        final placesNotifier = ref.read(placesProvider.notifier);
+        for (var entity in orderUpdateEntities) {
+          placesNotifier.move(entity.oldIndex, entity.newIndex);
+        }
+      },
+      builder: (children, scrollController) => GridView(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        controller: scrollController,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.4,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 4,
         ),
+        children: children,
+      ),
+    );
+  }
+
+  Expanded _buildAddPlaceGuide() {
+    return const Expanded(
+      child: Center(
+        child: Text('To add to your favorites:\n\n1. Scan a QR code first.\n2. Tap the plus button.\n3. Give it a name, and you\'re done!'),
       ),
     );
   }
@@ -121,15 +140,15 @@ class RecommendationCard extends ConsumerWidget {
         color: Theme.of(context).colorScheme.primary,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: recommendedPlace.when(
-          data: (data) => _buildRecommendation(context, data.item1, data.item2),
-          error: (error, _) => Center(child: Text(error.toString(), style: const TextStyle(color: Colors.white))),
+          data: (data) => _buildRecommendationCard(context, data.item1, data.item2),
+          error: (error, _) => _buildScanCard(ref),
           loading: () => const CCPI(),
         ),
       ),
     );
   }
 
-  Widget _buildRecommendation(BuildContext context, Place place, double distance) {
+  Widget _buildRecommendationCard(BuildContext context, Place place, double distance) {
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -162,6 +181,14 @@ class RecommendationCard extends ConsumerWidget {
         ),
       ),
       onTap: () => sendMessage(place.message),
+    );
+  }
+
+  Widget _buildScanCard(WidgetRef ref) {
+    final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
+    return InkWell(
+      child: const Icon(Icons.camera_alt_outlined, color: Colors.white),
+      onTap: () => selectedPageNotifier.state = SelectedPage.scan,
     );
   }
 }
