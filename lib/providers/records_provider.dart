@@ -16,7 +16,7 @@ class RecordsNotifier extends StateNotifier<List<Record>> {
     box.put('records', value);
   }
 
-  Future<void> add(Record record) async {
+  void add(Record record) {
     state = state..add(record);
   }
 }

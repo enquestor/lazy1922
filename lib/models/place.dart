@@ -46,6 +46,24 @@ class Place extends Record {
     );
   }
 
+  Place copyWith({
+    Code? code,
+    String? message,
+    DateTime? time,
+    double? latitude,
+    double? longitude,
+    String? name,
+  }) {
+    return Place(
+      code: code ?? this.code,
+      message: message ?? this.message,
+      time: time ?? this.time,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      name: name ?? this.name,
+    );
+  }
+
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -71,4 +89,7 @@ class Place extends Record {
 
   @override
   int get hashCode => code.hashCode;
+
+  @override
+  String toString() => 'code: $code, message: $message, time: $time, latitude: $latitude, longitude: $longitude, name: $name\n';
 }

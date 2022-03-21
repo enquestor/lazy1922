@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/lazy_error.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
@@ -57,7 +58,7 @@ class HomePage extends ConsumerWidget {
                   crossAxisCount: 2,
                   childAspectRatio: 1.4,
                   crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
+                  mainAxisSpacing: 4,
                 ),
                 children: children,
               ),
@@ -204,22 +205,89 @@ class PlaceCard extends ConsumerWidget {
                 ],
               ),
             ),
-            onTap: () => _onCardTap(context, isEditMode),
+            onTap: () => _onCardTap(context, ref, isEditMode),
           ),
         ),
       ),
     );
   }
 
-  void _onCardTap(BuildContext context, bool isEditMode) {
+  void _onCardTap(BuildContext context, WidgetRef ref, bool isEditMode) {
     if (isEditMode) {
-      _editPlace(context);
+      _editPlace(context, ref);
     } else {
       sendMessage(place.message);
     }
   }
 
-  void _editPlace(BuildContext context) {}
+  void _editPlace(BuildContext context, WidgetRef ref) async {
+    final placesNotifier = ref.read(placesProvider.notifier);
+    showDialog(
+      context: context,
+      builder: (context) => EditPlaceDialog(
+        place: place,
+        onConfirm: (place) {
+          if (place.name.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Name cannot be empty')));
+          } else {
+            placesNotifier.edit(place);
+          }
+        },
+        onDelete: () => placesNotifier.remove(place),
+      ),
+    );
+  }
+}
+
+class EditPlaceDialog extends StatelessWidget {
+  final Place place;
+  final bool isAdd;
+  final void Function(Place place) onConfirm;
+  final void Function()? onDelete;
+  const EditPlaceDialog({
+    Key? key,
+    required this.place,
+    required this.onConfirm,
+    this.onDelete,
+    this.isAdd = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final _nameController = TextEditingController(text: place.name);
+    return AlertDialog(
+      title: Text(isAdd ? 'Add Place' : 'Edit Place'),
+      content: Padding(
+        padding: const EdgeInsets.only(top: 24),
+        child: TextField(
+          controller: _nameController,
+          decoration: const InputDecoration(labelText: 'Name'),
+        ),
+      ),
+      actions: [
+        Visibility(
+          visible: !isAdd,
+          child: TextButton(
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.red.withOpacity(0.2))),
+            onPressed: () {
+              if (onDelete != null) {
+                onDelete!();
+              }
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        TextButton(
+          child: const Text('OK'),
+          onPressed: () {
+            onConfirm(place.copyWith(name: _nameController.text));
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
 }
 
 class AddCard extends ConsumerWidget {
@@ -279,40 +347,21 @@ class AddCard extends ConsumerWidget {
       return;
     }
 
-    final controller = TextEditingController();
-    final placeName = await showDialog<String>(
+    showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('New Place'),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: TextField(
-            controller: controller,
-            autofocus: true,
-            decoration: const InputDecoration(
-              hintText: 'Enter a name for this place',
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            child: const Text('Add'),
-            onPressed: () => Navigator.of(context).pop(controller.text),
-          ),
-        ],
+      builder: (context) => EditPlaceDialog(
+        place: Place.fromRecord(availableRecords[index], ''),
+        onConfirm: (place) {
+          if (place.name.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Name cannot be empty')));
+          } else {
+            final placesNotifier = ref.read(placesProvider.notifier);
+            placesNotifier.add(place);
+          }
+        },
+        isAdd: true,
       ),
     );
-
-    if (placeName == null) {
-      return;
-    }
-
-    final placesNotifier = ref.read(placesProvider.notifier);
-    placesNotifier.add(Place.fromRecord(availableRecords[index], placeName));
   }
 }
 

@@ -16,15 +16,22 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
     box.put('places', value);
   }
 
-  Future<void> add(Place place) async {
+  void add(Place place) {
     state = state..add(place);
   }
 
-  Future<void> removeAt(int index) async {
-    state = state..removeAt(index);
+  void edit(Place place) {
+    final index = state.indexOf(place);
+    state = state
+      ..remove(place)
+      ..insert(index, place);
   }
 
-  Future<void> move(int oldIndex, int newIndex) async {
+  void remove(Place place) {
+    state = state..remove(place);
+  }
+
+  void move(int oldIndex, int newIndex) {
     final place = state[oldIndex];
     state = state
       ..removeAt(oldIndex)
