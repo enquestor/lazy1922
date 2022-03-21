@@ -8,7 +8,7 @@ part of 'record.dart';
 
 class RecordAdapter extends TypeAdapter<Record> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
   Record read(BinaryReader reader) {

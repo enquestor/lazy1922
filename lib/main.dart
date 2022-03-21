@@ -11,13 +11,14 @@ import 'package:vrouter/vrouter.dart';
 
 void main() async {
   await Hive.initFlutter();
-  Hive.registerAdapter(RecordAdapter());
-  Hive.registerAdapter(PlaceAdapter());
-  Hive.registerAdapter(CodeAdapter());
-  Hive.registerAdapter(UserAdapter());
+  Hive
+    ..registerAdapter<Code>(CodeAdapter())
+    ..registerAdapter<Record>(RecordAdapter())
+    ..registerAdapter<Place>(PlaceAdapter())
+    ..registerAdapter<User>(UserAdapter());
   await Future.wait([
-    Hive.openBox<Record>("records"),
-    Hive.openBox<Place>("places"),
+    Hive.openBox<List>("records"),
+    Hive.openBox<List>("places"),
     Hive.openBox<User>("users"),
   ]);
   runApp(
