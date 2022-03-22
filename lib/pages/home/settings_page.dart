@@ -4,6 +4,7 @@ import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/widgets/settings_item.dart';
 import 'package:lazy1922/widgets/settings_title.dart';
 import 'package:vrouter/vrouter.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -20,23 +21,23 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SettingsTitle(title: 'User'),
+        SettingsTitle(title: 'user'.tr()),
         SettingsItem(
-          title: 'Lazy1922 Premium',
+          title: 'lazy1922_premium'.tr(),
           onTap: () => context.vRouter.toNamed('premium'),
         ),
-        const SettingsTitle(title: 'Pro Features'),
+        SettingsTitle(title: 'premium_settings'.tr()),
         SettingsItem(
           title: 'Recommendation Range',
           onTap: user.isPro ? () => {} : null,
         ),
-        const SettingsTitle(title: 'About'),
+        SettingsTitle(title: 'about'.tr()),
         SettingsItem(
-          title: 'Privacy Policy',
+          title: 'privacy_policy'.tr(),
           onTap: () => showDialog(context: context, builder: (context) => const PrivacyDialog()),
         ),
         SettingsItem(
-          title: 'About',
+          title: 'about'.tr(),
           onTap: () => showDialog(context: context, builder: (context) => const AboutDialog()),
         ),
       ],
@@ -50,11 +51,11 @@ class PrivacyDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Privacy Policy'),
-      content: const Text('Lazy1922 only uses your GPS and stores all data locally. No data is sent to the server.'),
+      title: Text('privacy_policy'.tr()),
+      content: Text('privacy_policy_message'.tr()),
       actions: [
         TextButton(
-          child: const Text('OK'),
+          child: Text('ok'.tr()),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],
@@ -68,11 +69,11 @@ class AboutDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('About'),
-      content: const Text('Lazy1922 is a tool to help you scan 1922 SMS messages.'),
+      title: Text('about'.tr()),
+      content: Text('about_message'.tr()),
       actions: [
         TextButton(
-          child: const Text('OK'),
+          child: Text('ok'.tr()),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],
