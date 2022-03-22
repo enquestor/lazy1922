@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -10,6 +11,7 @@ import 'package:lazy1922/screens/premium_screen.dart';
 import 'package:vrouter/vrouter.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive
     ..registerAdapter<Code>(CodeAdapter())
@@ -20,47 +22,26 @@ void main() async {
     Hive.openBox<List>("records"),
     Hive.openBox<List>("places"),
     Hive.openBox<User>("users"),
+    EasyLocalization.ensureInitialized(),
   ]);
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    EasyLocalization(
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('zh', 'TW'),
+        Locale('ja', 'JP'),
+      ],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en', 'US'),
+      child: const ProviderScope(
+        child: MyApp(),
+      ),
     ),
   );
 }
 
-class MyApp extends ConsumerStatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  @override
-  ConsumerState<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance?.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.paused:
-        // final userNotifier = ref.read(userProvider.notifier);
-        // final dataNotifier = ref.read(dataProvider.notifier);
-        // userNotifier.save();
-        // dataNotifier.save();
-        break;
-      default:
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +77,9 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
           ),
         ),
       ),
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       initialUrl: '/',
       routes: [
         VWidget(

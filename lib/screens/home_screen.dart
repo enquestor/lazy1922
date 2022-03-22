@@ -7,6 +7,7 @@ import 'package:lazy1922/pages/home/settings_page.dart';
 import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 final _selectedIndexProvider = Provider<int>((ref) {
   final user = ref.watch(userProvider);
@@ -50,13 +51,13 @@ class HomeScreen extends ConsumerWidget {
 
     switch (selectedPage) {
       case SelectedPage.home:
-        appBarTitle = 'Home';
+        appBarTitle = 'home'.tr();
         break;
       case SelectedPage.scan:
-        appBarTitle = 'Scan';
+        appBarTitle = 'scan'.tr();
         break;
       case SelectedPage.settings:
-        appBarTitle = 'Settings';
+        appBarTitle = 'settings'.tr();
         break;
     }
 
@@ -77,22 +78,22 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _buildNavigationBar(WidgetRef ref) {
     var destinations = [
-      const NavigationDestination(
-        icon: Icon(Icons.camera_alt_outlined),
-        label: 'Scan',
+      NavigationDestination(
+        icon: const Icon(Icons.camera_alt_outlined),
+        label: 'scan'.tr(),
       ),
-      const NavigationDestination(
-        icon: Icon(Icons.settings_outlined),
-        label: 'Settings',
+      NavigationDestination(
+        icon: const Icon(Icons.settings_outlined),
+        label: 'settings'.tr(),
       ),
     ];
     final user = ref.watch(userProvider);
 
     if (user.isPro) {
       destinations = [
-        const NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          label: 'Home',
+        NavigationDestination(
+          icon: const Icon(Icons.home_outlined),
+          label: 'home'.tr(),
         ),
         ...destinations,
       ];
