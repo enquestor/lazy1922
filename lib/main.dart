@@ -5,8 +5,8 @@ import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/user.dart';
-import 'package:lazy1922/routes.dart';
 import 'package:lazy1922/screens/home_screen.dart';
+import 'package:lazy1922/screens/premium_screen.dart';
 import 'package:vrouter/vrouter.dart';
 
 void main() async {
@@ -96,12 +96,20 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
           ),
         ),
       ),
-      initialUrl: Routes.home,
+      initialUrl: '/',
       routes: [
         VWidget(
-          path: Routes.home,
+          name: 'home',
+          path: '/',
           widget: const HomeScreen(),
-        )
+          stackedRoutes: [
+            VWidget(
+              name: 'premium',
+              path: '/premium',
+              widget: const PremiumScreen(),
+            ),
+          ],
+        ),
       ],
     );
   }
