@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/widgets/settings_item.dart';
 import 'package:lazy1922/widgets/settings_title.dart';
+import 'package:vrouter/vrouter.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -15,15 +16,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-    final userNotifier = ref.watch(userProvider.notifier);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SettingsTitle(title: 'User'),
         SettingsItem(
-          title: 'Upgrade to Pro',
-          onTap: () => userNotifier.upgradeToPro(),
+          title: 'Lazy1922 Premium',
+          onTap: () => context.vRouter.toNamed('premium'),
         ),
         const SettingsTitle(title: 'Pro Features'),
         SettingsItem(
