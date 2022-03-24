@@ -16,72 +16,80 @@ class PremiumScreen extends ConsumerWidget {
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-                SliverAppBar(
-                  leading: IconButton(
-                    icon: const Icon(Icons.chevron_left, color: Colors.white),
-                    splashRadius: 20,
-                    onPressed: () => context.vRouter.pop(),
-                  ),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  flexibleSpace: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Colors.teal.shade300,
-                          Colors.teal.shade500,
-                          Colors.teal.shade600,
-                        ],
-                      ),
-                    ),
-                    child: FlexibleSpaceBar(
-                      title: Text('lazy1922_premium'.tr()),
-                      centerTitle: true,
-                    ),
-                  ),
-                  pinned: true,
-                  expandedHeight: 160,
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate([
-                    Padding(
-                      padding: const EdgeInsets.only(left: 24, right: 24, top: 60, bottom: 60),
-                      child: Text(
-                        'upgrade_premium_message'.tr(),
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                    ),
-                    FunctionTile(
-                      title: 'favorite_places'.tr(),
-                      subtitle: 'favorite_places_description'.tr(),
-                      leading: Icons.favorite_outline,
-                      onTap: () => {},
-                    ),
-                    FunctionTile(
-                      title: 'smart_suggestions'.tr(),
-                      subtitle: 'smart_suggestions_description'.tr(),
-                      leading: Icons.location_on_outlined,
-                      onTap: () => {},
-                    ),
-                    FunctionTile(
-                      title: 'home_widgets'.tr(),
-                      subtitle: 'home_widgets_description'.tr(),
-                      leading: Icons.dashboard_outlined,
-                    ),
-                    FunctionTile(
-                      title: 'backup_and_restore'.tr(),
-                      subtitle: 'backup_and_restore_description'.tr(),
-                      leading: Icons.save_alt_outlined,
-                    ),
-                  ]),
-                ),
+                _buildAppBar(context),
+                _buildFeatureList(context),
               ],
             ),
           ),
           _buildUpgradeBar(context, ref),
         ],
       ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return SliverAppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.chevron_left, color: Colors.white),
+        splashRadius: 20,
+        onPressed: () => context.vRouter.pop(),
+      ),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.teal.shade300,
+              Colors.teal.shade500,
+              Colors.teal.shade600,
+            ],
+          ),
+        ),
+        child: FlexibleSpaceBar(
+          title: Text('lazy1922_premium'.tr()),
+          centerTitle: true,
+        ),
+      ),
+      pinned: true,
+      expandedHeight: 160,
+    );
+  }
+
+  Widget _buildFeatureList(BuildContext context) {
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Padding(
+          padding: const EdgeInsets.only(left: 24, right: 24, top: 60, bottom: 60),
+          child: Text(
+            'upgrade_premium_message'.tr(),
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        FunctionTile(
+          title: 'favorite_places'.tr(),
+          subtitle: 'favorite_places_description'.tr(),
+          leading: Icons.favorite_outline,
+          onTap: () => {},
+        ),
+        FunctionTile(
+          title: 'smart_suggestions'.tr(),
+          subtitle: 'smart_suggestions_description'.tr(),
+          leading: Icons.location_on_outlined,
+          onTap: () => {},
+        ),
+        FunctionTile(
+          title: 'home_widgets'.tr(),
+          subtitle: 'home_widgets_description'.tr(),
+          leading: Icons.dashboard_outlined,
+        ),
+        FunctionTile(
+          title: 'backup_and_restore'.tr(),
+          subtitle: 'backup_and_restore_description'.tr(),
+          leading: Icons.save_alt_outlined,
+        ),
+      ]),
     );
   }
 
