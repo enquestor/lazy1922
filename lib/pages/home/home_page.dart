@@ -29,7 +29,7 @@ class HomePage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HomeTitle(title: 'recommendation'.tr()),
+          HomeTitle(title: 'suggestion'.tr()),
           const RecommendationCard(),
           const SizedBox(height: 32),
           HomeTitle(title: 'favorites'.tr()),
