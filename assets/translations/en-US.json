@@ -34,5 +34,15 @@
     "backup_and_restore_subtitle": "Keep all your favorite places when switching to a new phone.",
     "one_time_purchase": "One-time Purchase",
     "upgrade": "Upgrade",
-    "purchased": "Purchased"
+    "purchased": "Purchased",
+    "recommendation_range": "Recommendation Range",
+    "meter": {
+        "one": "{} meter",
+        "other": "{} meters"
+    },
+    "distance": {
+        "close": "50 meters",
+        "normal": "200 meters",
+        "far": "500 meters"
+    }
  }

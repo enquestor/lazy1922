@@ -6,16 +6,11 @@ import 'package:lazy1922/widgets/settings_title.dart';
 import 'package:vrouter/vrouter.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class SettingsPage extends ConsumerStatefulWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends ConsumerState<SettingsPage> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
 
     return Column(
@@ -28,8 +23,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         ),
         SettingsTitle(title: 'premium_settings'.tr()),
         SettingsItem(
-          title: 'Recommendation Range',
-          onTap: user.isPro ? () => {} : null,
+          title: 'recommendation_range'.tr(),
+          value: 'meter'.plural(user.recommendationRange),
+          onTap: user.isPro ? () => _onRecommendationRangeTap(context, ref) : null,
         ),
         SettingsTitle(title: 'about'.tr()),
         SettingsItem(
@@ -42,6 +38,34 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         ),
       ],
     );
+  }
+
+  void _onRecommendationRangeTap(BuildContext context, WidgetRef ref) async {
+    final range = await showDialog<int>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text('recommendation_range'.tr()),
+        children: [
+          SimpleDialogOption(
+            child: Text('distance.close'.tr()),
+            onPressed: () => Navigator.of(context).pop(50),
+          ),
+          SimpleDialogOption(
+            child: Text('distance.normal'.tr()),
+            onPressed: () => Navigator.of(context).pop(200),
+          ),
+          SimpleDialogOption(
+            child: Text('distance.far'.tr()),
+            onPressed: () => Navigator.of(context).pop(500),
+          ),
+        ],
+      ),
+    );
+
+    if (range != null) {
+      final userNotifier = ref.watch(userProvider.notifier);
+      userNotifier.setRecommendationRange(range);
+    }
   }
 }
 

@@ -110,8 +110,8 @@ class PremiumScreen extends ConsumerWidget {
   }
 
   Widget _buildUpgradeBar(BuildContext context, WidgetRef ref) {
-    final user = ref.read(userProvider);
-    final userNotifier = ref.read(userProvider.notifier);
+    final user = ref.watch(userProvider);
+    final userNotifier = ref.watch(userProvider.notifier);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       child: Row(

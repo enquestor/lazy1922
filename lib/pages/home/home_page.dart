@@ -11,6 +11,7 @@ import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/records_provider.dart';
 import 'package:lazy1922/providers/selected_page_provider.dart';
+import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:lazy1922/widgets/ccpi.dart';
 import 'package:tuple/tuple.dart';
@@ -124,6 +125,10 @@ final _recommendedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, doubl
 
   final recommendedPlace = places.first;
   final distance = Geolocator.distanceBetween(recommendedPlace.latitude, recommendedPlace.longitude, location.latitude, location.longitude);
+  final recommendationRange = ref.watch(userProvider).recommendationRange;
+  if (distance > recommendationRange) {
+    throw LazyError.noRecommendationInRange;
+  }
   return Tuple2(recommendedPlace, distance);
 });
 
