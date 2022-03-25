@@ -34,5 +34,15 @@
     "backup_and_restore_subtitle": "讓你在換手機時保留並復原最愛地點",
     "one_time_purchase": "一次性購買",
     "upgrade": "升級",
-    "purchased": "已購買"
+    "purchased": "已購買",
+    "recommendation_range": "推薦範圍",
+    "meter": {
+        "one": "{} 公尺",
+        "other": "{} 公尺"
+    },
+    "distance": {
+        "close": "50 公尺",
+        "normal": "200 公尺",
+        "far": "500 公尺"
+    }
 }

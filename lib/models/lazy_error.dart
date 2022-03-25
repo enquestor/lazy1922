@@ -3,4 +3,5 @@ enum LazyError {
   permissionDenied,
   permissionDeniedForever,
   noSavedPlaces,
+  noRecommendationInRange,
 }

@@ -18,9 +18,11 @@ class UserNotifer extends StateNotifier<User> {
 
   void upgradeToPro() async {
     await Geolocator.requestPermission();
-    state = state.copyWith(
-      isPro: true,
-    );
+    state = state.copyWith(isPro: true);
+  }
+
+  void setRecommendationRange(int range) {
+    state = state.copyWith(recommendationRange: range);
   }
 }
 
