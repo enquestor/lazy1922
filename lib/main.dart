@@ -29,7 +29,7 @@ void main() async {
       supportedLocales: const [
         Locale('en', 'US'),
         Locale('zh', 'TW'),
-        Locale('ja', 'JP'),
+        // Locale('ja', 'JP'),
       ],
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
@@ -74,6 +74,16 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ),
