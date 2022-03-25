@@ -110,6 +110,7 @@ class PremiumScreen extends ConsumerWidget {
   }
 
   Widget _buildUpgradeBar(BuildContext context, WidgetRef ref) {
+    final user = ref.read(userProvider);
     final userNotifier = ref.read(userProvider.notifier);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
@@ -132,8 +133,8 @@ class PremiumScreen extends ConsumerWidget {
             height: 48,
             width: 96,
             child: ElevatedButton(
-              child: Text('upgrade'.tr()),
-              onPressed: () => userNotifier.upgradeToPro(),
+              child: Text(user.isPro ? 'purchased'.tr() : 'upgrade'.tr()),
+              onPressed: user.isPro ? null : () => userNotifier.upgradeToPro(),
             ),
           ),
         ],
