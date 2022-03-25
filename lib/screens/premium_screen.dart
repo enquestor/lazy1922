@@ -63,7 +63,7 @@ class PremiumScreen extends ConsumerWidget {
     return SliverList(
       delegate: SliverChildListDelegate([
         Padding(
-          padding: const EdgeInsets.only(left: 24, right: 24, top: 60, bottom: 60),
+          padding: const EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 32),
           child: Text(
             'upgrade_premium_message'.tr(),
             style: Theme.of(context).textTheme.headline6,
@@ -100,6 +100,7 @@ class PremiumScreen extends ConsumerWidget {
       context: context,
       initHeight: featureModalHeightRatio,
       maxHeight: featureModalHeightRatio,
+      isDismissible: false,
       anchors: [0, featureModalHeightRatio],
       builder: (context, controller, __) => FeatureSheet(
         title: title,
@@ -113,7 +114,7 @@ class PremiumScreen extends ConsumerWidget {
     final user = ref.watch(userProvider);
     final userNotifier = ref.watch(userProvider.notifier);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Row(
         children: [
           Text(
@@ -131,7 +132,7 @@ class PremiumScreen extends ConsumerWidget {
           const Spacer(),
           SizedBox(
             height: 48,
-            width: 96,
+            width: 108,
             child: ElevatedButton(
               child: Text(user.isPro ? 'purchased'.tr() : 'upgrade'.tr()),
               onPressed: user.isPro ? null : () => userNotifier.upgradeToPro(),
@@ -206,46 +207,44 @@ class FeatureSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
         ),
-        child: Material(
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildCloseBar(context),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.headline4!.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 24),
-                  child: Text(
-                    description,
-                    style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 16),
-                    textAlign: TextAlign.start,
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * featureModalHeightRatio * 0.72,
-                  child: Center(child: Text('some picture here')),
-                )
-              ],
-            ),
-          ),
-        ),
-        clipBehavior: Clip.antiAliasWithSaveLayer,
       ),
+      child: Material(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildCloseBar(context),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headline4!.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 24),
+                child: Text(
+                  description,
+                  style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 16),
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * featureModalHeightRatio * 0.72,
+                child: Center(child: Text('some picture here')),
+              )
+            ],
+          ),
+        ),
+      ),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
     );
   }
 
