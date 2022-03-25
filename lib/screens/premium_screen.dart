@@ -1,5 +1,7 @@
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lazy1922/consts.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:vrouter/vrouter.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -67,29 +69,43 @@ class PremiumScreen extends ConsumerWidget {
             style: Theme.of(context).textTheme.headline6,
           ),
         ),
-        FunctionTile(
+        FeatureTile(
           title: 'favorite_places'.tr(),
-          subtitle: 'favorite_places_description'.tr(),
+          subtitle: 'favorite_places_subtitle'.tr(),
           leading: Icons.favorite_outline,
-          onTap: () => {},
+          onTap: () => _showFeatureCard(context, title: 'favorite_places'.tr(), description: 'favorite_places_description'.tr()),
         ),
-        FunctionTile(
+        FeatureTile(
           title: 'smart_suggestions'.tr(),
-          subtitle: 'smart_suggestions_description'.tr(),
+          subtitle: 'smart_suggestions_subtitle'.tr(),
           leading: Icons.location_on_outlined,
-          onTap: () => {},
+          onTap: () => _showFeatureCard(context, title: 'smart_suggestions'.tr(), description: 'smart_suggestions_description'.tr()),
         ),
-        FunctionTile(
+        FeatureTile(
           title: 'home_widgets'.tr(),
-          subtitle: 'home_widgets_description'.tr(),
+          subtitle: 'home_widgets_subtitle'.tr(),
           leading: Icons.dashboard_outlined,
         ),
-        FunctionTile(
+        FeatureTile(
           title: 'backup_and_restore'.tr(),
-          subtitle: 'backup_and_restore_description'.tr(),
+          subtitle: 'backup_and_restore_subtitle'.tr(),
           leading: Icons.save_alt_outlined,
         ),
       ]),
+    );
+  }
+
+  void _showFeatureCard(BuildContext context, {required String title, required String description}) {
+    showFlexibleBottomSheet(
+      context: context,
+      initHeight: featureModalHeightRatio,
+      maxHeight: featureModalHeightRatio,
+      anchors: [0, featureModalHeightRatio],
+      builder: (context, controller, __) => FeatureSheet(
+        title: title,
+        description: description,
+        scrollController: controller,
+      ),
     );
   }
 
@@ -126,12 +142,12 @@ class PremiumScreen extends ConsumerWidget {
   }
 }
 
-class FunctionTile extends StatelessWidget {
+class FeatureTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData leading;
   final void Function()? onTap;
-  const FunctionTile({
+  const FeatureTile({
     Key? key,
     required this.title,
     required this.subtitle,
@@ -177,6 +193,73 @@ class FunctionTile extends StatelessWidget {
         ),
         onTap: onTap,
       ),
+    );
+  }
+}
+
+class FeatureSheet extends StatelessWidget {
+  final String title;
+  final String description;
+  final ScrollController scrollController;
+  const FeatureSheet({Key? key, required this.title, required this.description, required this.scrollController}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        child: Material(
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildCloseBar(context),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.headline4!.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 24),
+                  child: Text(
+                    description,
+                    style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 16),
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * featureModalHeightRatio * 0.72,
+                  child: Center(child: Text('some picture here')),
+                )
+              ],
+            ),
+          ),
+        ),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+      ),
+    );
+  }
+
+  Widget _buildCloseBar(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(6),
+          child: IconButton(
+            icon: const Icon(Icons.clear),
+            splashRadius: 20,
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+      ],
     );
   }
 }
