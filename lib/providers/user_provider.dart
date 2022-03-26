@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lazy1922/models/user.dart';
 
@@ -17,7 +16,6 @@ class UserNotifer extends StateNotifier<User> {
   }
 
   void upgradeToPro() async {
-    await Geolocator.requestPermission();
     state = state.copyWith(isPro: true);
   }
 

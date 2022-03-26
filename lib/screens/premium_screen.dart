@@ -2,15 +2,33 @@ import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/consts.dart';
+import 'package:lazy1922/models/lazy_purchase_error.dart';
 import 'package:lazy1922/providers/user_provider.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:vrouter/vrouter.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+final _packageProvider = FutureProvider.autoDispose<Package>((ref) async {
+  Offerings offerings = await Purchases.getOfferings();
+  final offering = offerings.current;
+  if (offering == null) {
+    throw LazyPurchaseError.noOffering;
+  }
+
+  final package = offering.getPackage('premium');
+  if (package == null) {
+    throw LazyPurchaseError.noPackage;
+  }
+
+  return package;
+});
 
 class PremiumScreen extends ConsumerWidget {
   const PremiumScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final package = ref.watch(_packageProvider);
     return Material(
       child: Column(
         children: [
@@ -23,7 +41,11 @@ class PremiumScreen extends ConsumerWidget {
               ],
             ),
           ),
-          _buildUpgradeBar(context, ref),
+          package.when(
+            data: (data) => _buildUpgradeBar(context, ref, data),
+            error: (error, _) => Text(error.toString()),
+            loading: () => _buildUpgradeBar(context, ref),
+          )
         ],
       ),
     );
@@ -110,15 +132,16 @@ class PremiumScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildUpgradeBar(BuildContext context, WidgetRef ref) {
+  Widget _buildUpgradeBar(BuildContext context, WidgetRef ref, [Package? package]) {
     final user = ref.watch(userProvider);
     final userNotifier = ref.watch(userProvider.notifier);
+    final loading = package == null;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Row(
         children: [
           Text(
-            '\$30',
+            loading ? '--' : '${package.product.price}',
             style: Theme.of(context).textTheme.headline4!.copyWith(fontStyle: FontStyle.italic),
           ),
           const SizedBox(width: 12),

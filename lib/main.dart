@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lazy1922/models/code.dart';
@@ -8,6 +11,7 @@ import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/user.dart';
 import 'package:lazy1922/screens/home_screen.dart';
 import 'package:lazy1922/screens/premium_screen.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:vrouter/vrouter.dart';
 
 void main() async {
@@ -22,8 +26,18 @@ void main() async {
     Hive.openBox<List>("records"),
     Hive.openBox<List>("places"),
     Hive.openBox<User>("users"),
+    dotenv.load(fileName: ".env"),
     EasyLocalization.ensureInitialized(),
   ]);
+
+  Purchases.setDebugLogsEnabled(true);
+
+  if (Platform.isAndroid) {
+    Purchases.setup(dotenv.env['PUBLIC_GOOGLE_SDK_KEY']!);
+  } else {
+    Purchases.setup(dotenv.env['PUBLIC_IOS_SDK_KEY']!);
+  }
+
   runApp(
     EasyLocalization(
       supportedLocales: const [

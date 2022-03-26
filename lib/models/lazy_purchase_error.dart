@@ -1,0 +1,4 @@
+enum LazyPurchaseError {
+  noOffering,
+  noPackage,
+}
