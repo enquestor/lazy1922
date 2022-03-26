@@ -29,6 +29,10 @@ class UserNotifer extends StateNotifier<User> {
   void setRecommendationRange(int range) {
     state = state.copyWith(recommendationRange: range);
   }
+
+  void fakeUpgrade() {
+    state = state.copyWith(isPro: true);
+  }
 }
 
 final userProvider = StateNotifierProvider<UserNotifer, User>((ref) => UserNotifer());
