@@ -34,7 +34,7 @@ void main() async {
 
   if (Platform.isAndroid) {
     Purchases.setup(dotenv.env['PUBLIC_GOOGLE_SDK_KEY']!);
-  } else {
+  } else if (Platform.isIOS) {
     Purchases.setup(dotenv.env['PUBLIC_IOS_SDK_KEY']!);
   }
 
