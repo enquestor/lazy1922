@@ -1,5 +1,6 @@
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/consts.dart';
 import 'package:lazy1922/models/lazy_purchase_error.dart';
@@ -22,6 +23,7 @@ final _packageProvider = FutureProvider.autoDispose<Package>((ref) async {
 
   return package;
 });
+final _isPurchasingProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 class PremiumScreen extends ConsumerWidget {
   const PremiumScreen({Key? key}) : super(key: key);
@@ -29,8 +31,8 @@ class PremiumScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final package = ref.watch(_packageProvider);
-    return Material(
-      child: Column(
+    return Scaffold(
+      body: Column(
         children: [
           Expanded(
             child: CustomScrollView(
@@ -134,7 +136,7 @@ class PremiumScreen extends ConsumerWidget {
 
   Widget _buildUpgradeBar(BuildContext context, WidgetRef ref, [Package? package]) {
     final user = ref.watch(userProvider);
-    final userNotifier = ref.watch(userProvider.notifier);
+    final isPurchasing = ref.watch(_isPurchasingProvider);
     final loading = package == null;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -158,12 +160,40 @@ class PremiumScreen extends ConsumerWidget {
             width: 108,
             child: ElevatedButton(
               child: Text(user.isPro ? 'purchased'.tr() : 'upgrade'.tr()),
-              onPressed: user.isPro ? null : () => userNotifier.upgradeToPro(),
+              onPressed: user.isPro || isPurchasing || loading ? null : () => _upgrade(context, ref, package),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _upgrade(BuildContext context, WidgetRef ref, Package package) async {
+    final isPurchasingNotifier = ref.read(_isPurchasingProvider.notifier);
+    isPurchasingNotifier.state = true;
+
+    final userNotifier = ref.read(userProvider.notifier);
+    String? errorMessage;
+    try {
+      await userNotifier.upgradeToPro(package);
+    } catch (e) {
+      if (e is PlatformException) {
+        var errorCode = PurchasesErrorHelper.getErrorCode(e);
+        if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
+          errorMessage = 'purchase_cancelled'.tr();
+        } else {
+          errorMessage = 'unknown_error'.tr();
+        }
+      } else {
+        errorMessage = 'unknown_error'.tr();
+      }
+    }
+
+    if (errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+    }
+
+    isPurchasingNotifier.state = false;
   }
 }
 

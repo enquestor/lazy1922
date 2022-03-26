@@ -35,6 +35,8 @@
     "one_time_purchase": "一次性購買",
     "upgrade": "升級",
     "purchased": "已購買",
+    "purchase_cancelled": "購買中斷",
+    "unknown_error": "未知錯誤",
     "recommendation_range": "推薦範圍",
     "meter": {
         "one": "{} 公尺",
