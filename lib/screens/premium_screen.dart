@@ -1,18 +1,38 @@
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/consts.dart';
+import 'package:lazy1922/models/lazy_purchase_error.dart';
 import 'package:lazy1922/providers/user_provider.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:vrouter/vrouter.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+final _packageProvider = FutureProvider.autoDispose<Package>((ref) async {
+  Offerings offerings = await Purchases.getOfferings();
+  final offering = offerings.current;
+  if (offering == null) {
+    throw LazyPurchaseError.noOffering;
+  }
+
+  final package = offering.getPackage('premium');
+  if (package == null) {
+    throw LazyPurchaseError.noPackage;
+  }
+
+  return package;
+});
+final _isPurchasingProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 class PremiumScreen extends ConsumerWidget {
   const PremiumScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Material(
-      child: Column(
+    final package = ref.watch(_packageProvider);
+    return Scaffold(
+      body: Column(
         children: [
           Expanded(
             child: CustomScrollView(
@@ -23,7 +43,11 @@ class PremiumScreen extends ConsumerWidget {
               ],
             ),
           ),
-          _buildUpgradeBar(context, ref),
+          package.when(
+            data: (data) => _buildUpgradeBar(context, ref, data),
+            error: (error, _) => Text(error.toString()),
+            loading: () => _buildUpgradeBar(context, ref),
+          )
         ],
       ),
     );
@@ -63,7 +87,7 @@ class PremiumScreen extends ConsumerWidget {
     return SliverList(
       delegate: SliverChildListDelegate([
         Padding(
-          padding: const EdgeInsets.only(left: 24, right: 24, top: 60, bottom: 60),
+          padding: const EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 32),
           child: Text(
             'upgrade_premium_message'.tr(),
             style: Theme.of(context).textTheme.headline6,
@@ -100,6 +124,7 @@ class PremiumScreen extends ConsumerWidget {
       context: context,
       initHeight: featureModalHeightRatio,
       maxHeight: featureModalHeightRatio,
+      isDismissible: false,
       anchors: [0, featureModalHeightRatio],
       builder: (context, controller, __) => FeatureSheet(
         title: title,
@@ -109,15 +134,16 @@ class PremiumScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildUpgradeBar(BuildContext context, WidgetRef ref) {
+  Widget _buildUpgradeBar(BuildContext context, WidgetRef ref, [Package? package]) {
     final user = ref.watch(userProvider);
-    final userNotifier = ref.watch(userProvider.notifier);
+    final isPurchasing = ref.watch(_isPurchasingProvider);
+    final loading = package == null;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Row(
         children: [
           Text(
-            '\$30',
+            loading ? '--' : '${package.product.price}',
             style: Theme.of(context).textTheme.headline4!.copyWith(fontStyle: FontStyle.italic),
           ),
           const SizedBox(width: 12),
@@ -131,15 +157,43 @@ class PremiumScreen extends ConsumerWidget {
           const Spacer(),
           SizedBox(
             height: 48,
-            width: 96,
+            width: 108,
             child: ElevatedButton(
               child: Text(user.isPro ? 'purchased'.tr() : 'upgrade'.tr()),
-              onPressed: user.isPro ? null : () => userNotifier.upgradeToPro(),
+              onPressed: user.isPro || isPurchasing || loading ? null : () => _upgrade(context, ref, package),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _upgrade(BuildContext context, WidgetRef ref, Package package) async {
+    final isPurchasingNotifier = ref.read(_isPurchasingProvider.notifier);
+    isPurchasingNotifier.state = true;
+
+    final userNotifier = ref.read(userProvider.notifier);
+    String? errorMessage;
+    try {
+      await userNotifier.upgradeToPro(package);
+    } catch (e) {
+      if (e is PlatformException) {
+        var errorCode = PurchasesErrorHelper.getErrorCode(e);
+        if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
+          errorMessage = 'purchase_cancelled'.tr();
+        } else {
+          errorMessage = 'unknown_error'.tr();
+        }
+      } else {
+        errorMessage = 'unknown_error'.tr();
+      }
+    }
+
+    if (errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+    }
+
+    isPurchasingNotifier.state = false;
   }
 }
 
@@ -206,46 +260,44 @@ class FeatureSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
         ),
-        child: Material(
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildCloseBar(context),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.headline4!.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 24),
-                  child: Text(
-                    description,
-                    style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 16),
-                    textAlign: TextAlign.start,
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * featureModalHeightRatio * 0.72,
-                  child: Center(child: Text('some picture here')),
-                )
-              ],
-            ),
-          ),
-        ),
-        clipBehavior: Clip.antiAliasWithSaveLayer,
       ),
+      child: Material(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildCloseBar(context),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headline4!.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 24),
+                child: Text(
+                  description,
+                  style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 16),
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * featureModalHeightRatio * 0.72,
+                child: Center(child: Text('some picture here')),
+              )
+            ],
+          ),
+        ),
+      ),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
     );
   }
 

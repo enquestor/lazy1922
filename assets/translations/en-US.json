@@ -35,6 +35,8 @@
     "one_time_purchase": "One-time Purchase",
     "upgrade": "Upgrade",
     "purchased": "Purchased",
+    "purchase_cancelled": "Purchase Cancelled",
+    "unknown_error": "Unknown Error",
     "recommendation_range": "Recommendation Range",
     "meter": {
         "one": "{} meter",

@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lazy1922/consts.dart';
 import 'package:lazy1922/models/record.dart';
 
 class RecordsNotifier extends StateNotifier<List<Record>> {
@@ -18,7 +17,7 @@ class RecordsNotifier extends StateNotifier<List<Record>> {
   }
 
   void add(Record record) {
-    state = (state..add(record)).sublist(state.length - maxRecordCount);
+    state = [record, ...state];
   }
 }
 

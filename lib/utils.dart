@@ -12,7 +12,7 @@ Future<Position> getLocation() async {
   }
 
   // check if perission is granted
-  final permission = await Geolocator.checkPermission();
+  final permission = await Geolocator.requestPermission();
   if (permission == LocationPermission.denied) {
     throw LazyError.permissionDenied;
   } else if (permission == LocationPermission.deniedForever) {
