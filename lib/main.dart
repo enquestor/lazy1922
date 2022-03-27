@@ -11,6 +11,7 @@ import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/user.dart';
 import 'package:lazy1922/screens/home_screen.dart';
 import 'package:lazy1922/screens/premium_screen.dart';
+import 'package:lazy1922/theme.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:vrouter/vrouter.dart';
 
@@ -62,50 +63,30 @@ class MyApp extends StatelessWidget {
     return VRouter(
       title: 'Lazy1922',
       theme: ThemeData(
-        appBarTheme: AppBarTheme(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            titleTextStyle: Theme.of(context).textTheme.headline6,
-            elevation: 0,
-            centerTitle: true,
-            iconTheme: IconThemeData(
-              color: Theme.of(context).textTheme.headline6!.color,
-            )),
+        brightness: Brightness.light,
         primarySwatch: Colors.teal,
-        cardTheme: CardTheme(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          elevation: 4,
-        ),
-        dialogTheme: DialogTheme(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-        ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
+        appBarTheme: appBarTheme(context, Brightness.light),
+        cardTheme: cardTheme,
+        dialogTheme: dialogTheme,
+        floatingActionButtonTheme: floatingActionButtonTheme,
+        inputDecorationTheme: inputDecorationTheme,
+        textButtonTheme: textButtonTheme,
+        elevatedButtonTheme: elevatedButtonTheme,
+        outlinedButtonTheme: outlinedButtonTheme,
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.teal,
+        appBarTheme: appBarTheme(context, Brightness.dark),
+        cardTheme: cardTheme,
+        dialogTheme: dialogTheme,
+        floatingActionButtonTheme: floatingActionButtonTheme,
+        inputDecorationTheme: inputDecorationTheme,
+        textButtonTheme: textButtonTheme,
+        elevatedButtonTheme: elevatedButtonTheme,
+        outlinedButtonTheme: outlinedButtonTheme,
+      ),
+      themeMode: ThemeMode.system,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
