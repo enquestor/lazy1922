@@ -21,6 +21,10 @@ class SettingsPage extends ConsumerWidget {
           title: 'lazy1922_premium'.tr(),
           onTap: () => context.vRouter.toNamed('premium'),
         ),
+        SettingsItem(
+          title: 'language'.tr(),
+          onTap: () => _onLanguageTap(context),
+        ),
         SettingsTitle(title: 'premium_settings'.tr()),
         SettingsItem(
           title: 'recommendation_range'.tr(),
@@ -66,6 +70,30 @@ class SettingsPage extends ConsumerWidget {
       final userNotifier = ref.watch(userProvider.notifier);
       userNotifier.setRecommendationRange(range);
     }
+  }
+
+  void _onLanguageTap(BuildContext context) async {
+    final locale = await showDialog<Locale>(
+        context: context,
+        builder: (context) => SimpleDialog(
+              title: Text('language'.tr()),
+              children: [
+                SimpleDialogOption(
+                  child: Text('zh_TW'.tr()),
+                  onPressed: () => Navigator.of(context).pop(const Locale('zh', 'TW')),
+                ),
+                SimpleDialogOption(
+                  child: Text('en_US'.tr()),
+                  onPressed: () => Navigator.of(context).pop(const Locale('en', 'US')),
+                ),
+              ],
+            ));
+
+    if (locale == null) {
+      return;
+    }
+
+    context.setLocale(locale);
   }
 }
 
