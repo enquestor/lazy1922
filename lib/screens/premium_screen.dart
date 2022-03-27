@@ -202,7 +202,6 @@ class PremiumScreen extends ConsumerWidget {
   }
 
   void _trial(BuildContext context, WidgetRef ref) async {
-    final user = ref.read(userProvider);
     final userNotifier = ref.read(userProvider.notifier);
 
     await showDialog(
