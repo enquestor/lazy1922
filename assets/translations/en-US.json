@@ -49,5 +49,8 @@
         "close": "50 meters",
         "normal": "200 meters",
         "far": "500 meters"
-    }
+    },
+    "language": "Language",
+    "zh_TW": "Chinese (Traditional)",
+    "en_US": "English (US)"
  }
