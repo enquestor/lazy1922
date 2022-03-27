@@ -12,7 +12,7 @@ import 'package:easy_localization/easy_localization.dart';
 final _selectedIndexProvider = Provider<int>((ref) {
   final user = ref.watch(userProvider);
   final currentPage = ref.watch(selectedPageProvider);
-  if (user.isPro) {
+  if (user.isPremium) {
     return currentPage.index;
   } else {
     return currentPage.index - 1;
@@ -89,7 +89,7 @@ class HomeScreen extends ConsumerWidget {
     ];
     final user = ref.watch(userProvider);
 
-    if (user.isPro) {
+    if (user.isPremium) {
       destinations = [
         NavigationDestination(
           icon: const Icon(Icons.home_outlined),
@@ -104,7 +104,7 @@ class HomeScreen extends ConsumerWidget {
       onDestinationSelected: (value) {
         final user = ref.watch(userProvider);
         final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
-        if (user.isPro) {
+        if (user.isPremium) {
           selectedPageNotifier.state = SelectedPage.values[value];
         } else {
           selectedPageNotifier.state = SelectedPage.values[value + 1];

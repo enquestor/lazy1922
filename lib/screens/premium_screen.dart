@@ -6,6 +6,7 @@ import 'package:lazy1922/consts.dart';
 import 'package:lazy1922/models/lazy_purchase_error.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:vrouter/vrouter.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -45,7 +46,7 @@ class PremiumScreen extends ConsumerWidget {
           ),
           package.when(
             data: (data) => _buildUpgradeBar(context, ref, data),
-            error: (error, _) => Text(error.toString()),
+            error: (error, _) => _buildUpgradeBar(context, ref),
             loading: () => _buildUpgradeBar(context, ref),
           )
         ],
@@ -137,30 +138,34 @@ class PremiumScreen extends ConsumerWidget {
   Widget _buildUpgradeBar(BuildContext context, WidgetRef ref, [Package? package]) {
     final user = ref.watch(userProvider);
     final isPurchasing = ref.watch(_isPurchasingProvider);
-    final loading = package == null;
+    final isLoading = package == null;
+    final isActionAvailable = !(isLoading || isPurchasing);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Row(
         children: [
-          Text(
-            loading ? '--' : '${package.product.price}',
-            style: Theme.of(context).textTheme.headline4!.copyWith(fontStyle: FontStyle.italic),
-          ),
-          const SizedBox(width: 12),
-          Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: Text(
-              'one_time_purchase'.tr(),
-              style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 14),
+          Expanded(
+            child: SizedBox(
+              height: 48,
+              child: user.isTrialAvailable
+                  ? OutlinedButton(
+                      child: Text('trial'.tr()),
+                      onPressed: isActionAvailable ? () => _trial(context, ref) : null,
+                    )
+                  : OutlinedButton(
+                      child: Text('share'.tr()),
+                      onPressed: () => _share(),
+                    ),
             ),
           ),
-          const Spacer(),
-          SizedBox(
-            height: 48,
-            width: 108,
-            child: ElevatedButton(
-              child: Text(user.isPro ? 'purchased'.tr() : 'upgrade'.tr()),
-              onPressed: user.isPro || isPurchasing || loading ? null : () => _upgrade(context, ref, package),
+          const SizedBox(width: 12),
+          Expanded(
+            child: SizedBox(
+              height: 48,
+              child: ElevatedButton(
+                child: Text(user.isRealPremium ? 'purchased'.tr() : 'upgrade'.tr()),
+                onPressed: isActionAvailable && !user.isRealPremium ? () => _upgrade(context, ref, package) : null,
+              ),
             ),
           ),
         ],
@@ -168,7 +173,7 @@ class PremiumScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _upgrade(BuildContext context, WidgetRef ref, Package package) async {
+  void _upgrade(BuildContext context, WidgetRef ref, Package package) async {
     final isPurchasingNotifier = ref.read(_isPurchasingProvider.notifier);
     isPurchasingNotifier.state = true;
 
@@ -194,6 +199,28 @@ class PremiumScreen extends ConsumerWidget {
     }
 
     isPurchasingNotifier.state = false;
+  }
+
+  void _trial(BuildContext context, WidgetRef ref) async {
+    final user = ref.read(userProvider);
+    final userNotifier = ref.read(userProvider.notifier);
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('trial'.tr()),
+        content: Text('trial_message'.tr()),
+        actions: [
+          TextButton(child: Text('ok'.tr()), onPressed: () => Navigator.of(context).pop()),
+        ],
+      ),
+    );
+
+    userNotifier.startTrial();
+  }
+
+  void _share() async {
+    Share.share('share_message'.tr());
   }
 }
 

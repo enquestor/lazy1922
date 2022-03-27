@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lazy1922/consts.dart';
 import 'package:lazy1922/models/lazy_purchase_error.dart';
 import 'package:lazy1922/models/user.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -20,7 +21,7 @@ class UserNotifer extends StateNotifier<User> {
   Future<void> upgradeToPro(Package package) async {
     PurchaserInfo purchaserInfo = await Purchases.purchasePackage(package);
     if (purchaserInfo.entitlements.all["premium"]!.isActive) {
-      state = state.copyWith(isPro: true);
+      state = state.copyWith(isRealPremium: true);
     } else {
       throw LazyPurchaseError.premiumNotActive;
     }
@@ -30,8 +31,12 @@ class UserNotifer extends StateNotifier<User> {
     state = state.copyWith(recommendationRange: range);
   }
 
+  void startTrial() {
+    state = state.copyWith(trial: DateTime.now().add(const Duration(days: trialDays)));
+  }
+
   void fakeUpgrade() {
-    state = state.copyWith(isPro: true);
+    state = state.copyWith(isRealPremium: true);
   }
 }
 
