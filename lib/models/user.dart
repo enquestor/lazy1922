@@ -48,5 +48,5 @@ class User {
     return false;
   }
 
-  bool get isTrialAvailable => trial == null;
+  bool get isTrialAvailable => !isRealPremium && trial == null;
 }
