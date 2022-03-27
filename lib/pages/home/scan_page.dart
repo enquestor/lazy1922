@@ -2,49 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/record.dart';
-import 'package:lazy1922/providers/last_scan_time_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/records_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/utils.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanPage extends ConsumerWidget {
   const ScanPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return QRView(
-      key: GlobalKey(debugLabel: 'QR'),
-      onQRViewCreated: (controller) => _onQRViewCreated(context, ref, controller),
-      overlay: QrScannerOverlayShape(
-        borderColor: Theme.of(context).colorScheme.primary,
-        borderRadius: 24,
-        borderLength: 40,
-        borderWidth: 12,
-        cutOutSize: 300,
-      ),
+    return MobileScanner(
+      allowDuplicates: false,
+      onDetect: (barcode, args) => _onNewScan(context, ref, barcode),
     );
   }
 
-  void _onQRViewCreated(BuildContext context, WidgetRef ref, QRViewController controller) {
-    controller.scannedDataStream.listen((scanData) => _onNewScan(context, ref, scanData));
-  }
-
-  void _onNewScan(BuildContext context, WidgetRef ref, Barcode scanData) async {
-    final lastScanTime = ref.read(lastScanTimeProvider);
-    if (DateTime.now().difference(lastScanTime).inSeconds < 1) {
-      return;
-    } else {
-      ref.read(lastScanTimeProvider.notifier).state = DateTime.now();
-    }
-
-    var message = scanData.code;
-    if (message == null || !message.toLowerCase().startsWith('smsto:1922:')) {
+  void _onNewScan(BuildContext context, WidgetRef ref, Barcode barcode) async {
+    // ignore if not sms code
+    if (barcode.sms == null) {
       return;
     }
+    final sms = barcode.sms!;
 
-    message = message.substring(11);
+    // ignore if not to 1922 or no message
+    if (sms.phoneNumber != '1922' || sms.message == null) {
+      return;
+    }
+    final message = sms.message!;
+
     sendMessage(message);
 
     final user = ref.read(userProvider);
