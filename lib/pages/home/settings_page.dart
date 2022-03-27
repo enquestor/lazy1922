@@ -25,7 +25,7 @@ class SettingsPage extends ConsumerWidget {
         SettingsItem(
           title: 'recommendation_range'.tr(),
           value: 'meter'.plural(user.recommendationRange),
-          onTap: user.isPro ? () => _onRecommendationRangeTap(context, ref) : null,
+          onTap: user.isPremium ? () => _onRecommendationRangeTap(context, ref) : null,
         ),
         SettingsTitle(title: 'about'.tr()),
         SettingsItem(

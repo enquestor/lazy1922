@@ -35,7 +35,7 @@ class ScanPage extends ConsumerWidget {
     sendMessage(message);
 
     final user = ref.read(userProvider);
-    if (!user.isPro) {
+    if (!user.isPremium) {
       return;
     }
 
