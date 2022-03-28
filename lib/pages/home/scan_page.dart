@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/record.dart';
+import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/providers/records_provider.dart';
+import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -32,6 +34,9 @@ class ScanPage extends ConsumerWidget {
     final message = sms.message!;
 
     await sendMessage(message);
+
+    final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
+    selectedPageNotifier.state = SelectedPage.messages;
 
     final user = ref.read(userProvider);
     if (!user.isPremium) {

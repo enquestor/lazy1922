@@ -249,6 +249,8 @@ class PlaceCard extends ConsumerWidget {
       _editPlace(context, ref);
     } else {
       sendMessage(place.message);
+      final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
+      selectedPageNotifier.state = SelectedPage.messages;
     }
   }
 
