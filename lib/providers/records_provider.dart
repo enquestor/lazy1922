@@ -18,14 +18,14 @@ class RecordsNotifier extends StateNotifier<List<Record>> {
   }
 
   void add(Record record) {
-    state = [record, ...state];
+    state = [...state, record];
   }
 
   void redeemLastLocation(double latitude, double longitude) {
     if (DateTime.now().difference(state.first.time).inSeconds < maxLocationRedeemTime) {
       state = [
-        state.first.copyWith(latitude: latitude, longitude: longitude),
-        ...state.skip(1),
+        ...state.take(state.length - 1),
+        state.last.copyWith(latitude: latitude, longitude: longitude),
       ];
     }
   }
