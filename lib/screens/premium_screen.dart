@@ -2,6 +2,7 @@ import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:lazy1922/consts.dart';
 import 'package:lazy1922/models/lazy_purchase_error.dart';
 import 'package:lazy1922/providers/user_provider.dart';
@@ -181,6 +182,7 @@ class PremiumScreen extends ConsumerWidget {
     String? errorMessage;
     try {
       await userNotifier.upgradeToPro(package);
+      Geolocator.requestPermission();
     } catch (e) {
       if (e is PlatformException) {
         var errorCode = PurchasesErrorHelper.getErrorCode(e);
@@ -216,6 +218,7 @@ class PremiumScreen extends ConsumerWidget {
     );
 
     userNotifier.startTrial();
+    Geolocator.requestPermission();
   }
 
   void _share() async {

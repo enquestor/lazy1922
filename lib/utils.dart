@@ -29,3 +29,7 @@ Future<void> sendMessage(String message) async {
     log(error.toString(), name: 'SMS');
   }
 }
+
+DateTime date(DateTime time) {
+  return DateTime(time.year, time.month, time.day);
+}

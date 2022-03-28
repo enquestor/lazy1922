@@ -16,11 +16,11 @@ class ScanPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MobileScanner(
       allowDuplicates: false,
-      onDetect: (barcode, args) => _onNewScan(context, ref, barcode),
+      onDetect: (barcode, args) => _onNewScan(ref, barcode),
     );
   }
 
-  void _onNewScan(BuildContext context, WidgetRef ref, Barcode barcode) async {
+  void _onNewScan(WidgetRef ref, Barcode barcode) async {
     // ignore if not sms code
     if (barcode.sms == null) {
       return;
@@ -35,6 +35,16 @@ class ScanPage extends ConsumerWidget {
 
     await sendMessage(message);
 
+    // add record
+    final record = Record(
+      code: Code.parse(message),
+      message: message,
+      time: DateTime.now(),
+    );
+    final recordsNotifier = ref.read(recordsProvider.notifier);
+    recordsNotifier.add(record);
+
+    // change page to messages
     final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
     selectedPageNotifier.state = SelectedPage.messages;
 
@@ -44,22 +54,13 @@ class ScanPage extends ConsumerWidget {
     }
 
     try {
-      final record = Record(
-        code: Code.parse(message),
-        message: message,
-        time: DateTime.now(),
-      );
-
-      final recordsNotifier = ref.read(recordsProvider.notifier);
-      recordsNotifier.add(record);
-
       // defer location task to instantly show record in UI
       final location = await getLocation();
       recordsNotifier.redeemLastLocation(location.latitude, location.longitude);
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.toString())),
-      );
+      // ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+      //   SnackBar(content: Text(error.toString())),
+      // );
     }
   }
 }
