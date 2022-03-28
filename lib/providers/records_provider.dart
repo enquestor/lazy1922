@@ -22,7 +22,7 @@ class RecordsNotifier extends StateNotifier<List<Record>> {
   }
 
   void redeemLastLocation(double latitude, double longitude) {
-    if (DateTime.now().difference(state.first.time).inMinutes < maxLocationRedeemTime) {
+    if (DateTime.now().difference(state.first.time).inSeconds < maxLocationRedeemTime) {
       state = [
         state.first.copyWith(latitude: latitude, longitude: longitude),
         ...state.skip(1),
