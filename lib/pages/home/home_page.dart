@@ -348,7 +348,7 @@ class AddCard extends ConsumerWidget {
   void _addPlace(BuildContext context, WidgetRef ref) async {
     final records = ref.watch(recordsProvider);
     final places = ref.watch(placesProvider);
-    final availableRecords = records.where((record) => !places.contains(record)).toList();
+    final availableRecords = records.where((record) => places.where((place) => place.code == record.code).isEmpty).toList();
     if (availableRecords.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('no_available_records'.tr())),

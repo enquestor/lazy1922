@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/pages/home/home_page.dart';
+import 'package:lazy1922/pages/home/messages_page.dart';
 import 'package:lazy1922/pages/home/scan_page.dart';
 import 'package:lazy1922/pages/home/settings_page.dart';
 import 'package:lazy1922/providers/selected_page_provider.dart';
@@ -56,6 +57,9 @@ class HomeScreen extends ConsumerWidget {
       case SelectedPage.scan:
         appBarTitle = 'scan'.tr();
         break;
+      case SelectedPage.messages:
+        appBarTitle = '1922';
+        break;
       case SelectedPage.settings:
         appBarTitle = 'settings'.tr();
         break;
@@ -71,6 +75,8 @@ class HomeScreen extends ConsumerWidget {
         return const HomePage();
       case SelectedPage.scan:
         return const ScanPage();
+      case SelectedPage.messages:
+        return const MessagesPage();
       case SelectedPage.settings:
         return const SettingsPage();
     }
@@ -81,6 +87,10 @@ class HomeScreen extends ConsumerWidget {
       NavigationDestination(
         icon: const Icon(Icons.camera_alt_outlined),
         label: 'scan'.tr(),
+      ),
+      NavigationDestination(
+        icon: const Icon(Icons.message_outlined),
+        label: 'messages'.tr(),
       ),
       NavigationDestination(
         icon: const Icon(Icons.settings_outlined),

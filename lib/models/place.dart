@@ -5,24 +5,28 @@ import 'package:lazy1922/models/record.dart';
 part 'place.g.dart';
 
 @HiveType(typeId: 2)
-class Place extends Record {
+class Place {
+  @HiveField(0)
+  final Code code;
+  @HiveField(1)
+  final String message;
+  @HiveField(2)
+  final DateTime time;
+  @HiveField(3)
+  final double latitude;
+  @HiveField(4)
+  final double longitude;
   @HiveField(5)
   final String name;
 
   const Place({
-    required Code code,
-    required String message,
-    required DateTime time,
-    required double latitude,
-    required double longitude,
+    required this.code,
+    required this.message,
+    required this.time,
+    required this.latitude,
+    required this.longitude,
     required this.name,
-  }) : super(
-          code: code,
-          message: message,
-          time: time,
-          latitude: latitude,
-          longitude: longitude,
-        );
+  });
 
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(
@@ -40,8 +44,8 @@ class Place extends Record {
       code: record.code,
       message: record.message,
       time: record.time,
-      latitude: record.latitude,
-      longitude: record.longitude,
+      latitude: record.latitude!,
+      longitude: record.longitude!,
       name: name,
     );
   }
@@ -64,7 +68,6 @@ class Place extends Record {
     );
   }
 
-  @override
   Map<String, dynamic> toJson() {
     return {
       "code": code.value,

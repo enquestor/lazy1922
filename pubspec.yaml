@@ -34,7 +34,6 @@ dependencies:
   flutter_sms: ^2.3.2
   path_provider: ^2.0.9
   geolocator: ^8.2.0
-  skeletons: ^0.0.3
   tuple: ^2.0.0
   intl: ^0.17.0
   flutter_shake_animated: ^0.0.5
@@ -47,6 +46,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   mobile_scanner: ^1.0.0
   share_plus: ^4.0.3
+  simple_grouped_listview: ^1.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

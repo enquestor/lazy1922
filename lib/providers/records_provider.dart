@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lazy1922/consts.dart';
 import 'package:lazy1922/models/record.dart';
 
 class RecordsNotifier extends StateNotifier<List<Record>> {
@@ -18,6 +19,15 @@ class RecordsNotifier extends StateNotifier<List<Record>> {
 
   void add(Record record) {
     state = [record, ...state];
+  }
+
+  void redeemLastLocation(double latitude, double longitude) {
+    if (DateTime.now().difference(state.first.time).inMinutes < maxLocationRedeemTime) {
+      state = [
+        state.first.copyWith(latitude: latitude, longitude: longitude),
+        ...state.skip(1),
+      ];
+    }
   }
 }
 

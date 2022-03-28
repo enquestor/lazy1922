@@ -12,7 +12,7 @@ Future<Position> getLocation() async {
   }
 
   // check if perission is granted
-  final permission = await Geolocator.requestPermission();
+  final permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
     throw LazyLocationError.permissionDenied;
   } else if (permission == LocationPermission.deniedForever) {
@@ -22,7 +22,7 @@ Future<Position> getLocation() async {
   return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 }
 
-void sendMessage(String message) async {
+Future<void> sendMessage(String message) async {
   try {
     await sendSMS(message: message, recipients: ['1922']);
   } catch (error) {
