@@ -22,12 +22,16 @@ class RecordsNotifier extends StateNotifier<List<Record>> {
   }
 
   void redeemLastLocation(double latitude, double longitude) {
-    if (DateTime.now().difference(state.first.time).inSeconds < maxLocationRedeemTime) {
+    if (DateTime.now().difference(state.last.time).inSeconds < maxLocationRedeemTime) {
       state = [
         ...state.take(state.length - 1),
         state.last.copyWith(latitude: latitude, longitude: longitude),
       ];
     }
+  }
+
+  void removeRecord(Record record) {
+    state = state..removeWhere((r) => r.time == record.time);
   }
 }
 

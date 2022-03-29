@@ -81,7 +81,7 @@ class Place {
 
   @override
   bool operator ==(Object other) {
-    if (other is! Record) {
+    if (other is! Place) {
       return false;
     } else if (identical(this, other)) {
       return true;

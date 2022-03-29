@@ -74,4 +74,6 @@ class Record {
 
   @override
   int get hashCode => code.hashCode;
+
+  bool get isLocationAvailable => latitude != null && longitude != null;
 }

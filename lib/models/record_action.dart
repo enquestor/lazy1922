@@ -1,0 +1,4 @@
+enum RecordAction {
+  addToFavorites,
+  delete,
+}

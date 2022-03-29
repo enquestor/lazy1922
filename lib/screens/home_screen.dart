@@ -5,6 +5,8 @@ import 'package:lazy1922/pages/home/home_page.dart';
 import 'package:lazy1922/pages/home/messages_page.dart';
 import 'package:lazy1922/pages/home/scan_page.dart';
 import 'package:lazy1922/pages/home/settings_page.dart';
+import 'package:lazy1922/providers/is_place_mode_provider.dart';
+import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
@@ -26,7 +28,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: _buildAppBar(ref),
+      appBar: _buildAppBar(context, ref),
       body: _buildBody(ref),
       bottomNavigationBar: _buildNavigationBar(ref),
       floatingActionButton: _buildFloatingActionButton(context, ref),
@@ -46,8 +48,10 @@ class HomeScreen extends ConsumerWidget {
     }
   }
 
-  PreferredSizeWidget _buildAppBar(WidgetRef ref) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, WidgetRef ref) {
     final selectedPage = ref.watch(selectedPageProvider);
+    final isPlaceMode = ref.watch(isPlaceModeProvider);
+    final isPlaceModeNotifier = ref.watch(isPlaceModeProvider.notifier);
     late final String appBarTitle;
 
     switch (selectedPage) {
@@ -65,7 +69,21 @@ class HomeScreen extends ConsumerWidget {
         break;
     }
 
-    return AppBar(title: Text(appBarTitle));
+    return AppBar(
+      title: Text(appBarTitle),
+      actions: selectedPage == SelectedPage.messages
+          ? [
+              IconButton(
+                icon: Icon(
+                  Icons.location_on_outlined,
+                  color: isPlaceMode ? Theme.of(context).colorScheme.primary : null,
+                ),
+                splashRadius: 20,
+                onPressed: () => isPlaceModeNotifier.state = !isPlaceModeNotifier.state,
+              )
+            ]
+          : null,
+    );
   }
 
   Widget _buildBody(WidgetRef ref) {
@@ -125,8 +143,15 @@ class HomeScreen extends ConsumerWidget {
   }
 
   void _onFabPressed(BuildContext context, WidgetRef ref) async {
-    final isEditMode = ref.watch(isEditModeProvider);
+    final isEditMode = ref.read(isEditModeProvider);
     final isEditModeNotifier = ref.read(isEditModeProvider.notifier);
+    final places = ref.read(placesProvider);
+
+    if (places.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('add_place_first'.tr())));
+      return;
+    }
+
     if (isEditMode) {
       isEditModeNotifier.state = false;
     } else {
