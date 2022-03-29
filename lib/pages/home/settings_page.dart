@@ -49,6 +49,7 @@ class SettingsPage extends ConsumerWidget {
     final range = await showDialog<int>(
       context: context,
       builder: (context) => SimpleDialog(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
         title: Text('recommendation_range'.tr()),
         children: [
           DialogListTile(
