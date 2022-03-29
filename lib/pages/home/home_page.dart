@@ -103,7 +103,7 @@ class HomeTitle extends StatelessWidget {
   }
 }
 
-final _recommendedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
+final _suggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
   // use toList to make full copy so that sort doesn't mess with provided list
   final places = ref.watch(placesProvider).toList();
 
@@ -118,13 +118,13 @@ final _recommendedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, doubl
     return distanceA.compareTo(distanceB);
   });
 
-  final recommendedPlace = places.first;
-  final distance = Geolocator.distanceBetween(recommendedPlace.latitude, recommendedPlace.longitude, location.latitude, location.longitude);
-  final recommendationRange = ref.watch(userProvider).recommendationRange;
-  if (distance > recommendationRange) {
+  final suggestedPlace = places.first;
+  final distance = Geolocator.distanceBetween(suggestedPlace.latitude, suggestedPlace.longitude, location.latitude, location.longitude);
+  final suggestionRange = ref.watch(userProvider).suggestionRange;
+  if (distance > suggestionRange) {
     throw LazyError.noRecommendationInRange;
   }
-  return Tuple2(recommendedPlace, distance);
+  return Tuple2(suggestedPlace, distance);
 });
 
 class RecommendationCard extends ConsumerWidget {
@@ -132,14 +132,14 @@ class RecommendationCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recommendedPlace = ref.watch(_recommendedPlaceProvider);
+    final suggestedPlace = ref.watch(_suggestedPlaceProvider);
     return SizedBox(
       height: 160,
       width: double.infinity,
       child: Card(
         color: Theme.of(context).colorScheme.primary,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: recommendedPlace.when(
+        child: suggestedPlace.when(
           data: (data) => _buildRecommendationCard(context, ref, data.item1, data.item2),
           error: (error, _) => _buildScanCard(ref),
           loading: () => const CCPI(),

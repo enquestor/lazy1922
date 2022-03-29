@@ -28,8 +28,8 @@ class SettingsPage extends ConsumerWidget {
         ),
         SettingsTitle(title: 'premium_settings'.tr()),
         SettingsItem(
-          title: 'recommendation_range'.tr(),
-          value: 'meter'.plural(user.recommendationRange),
+          title: 'suggestion_range'.tr(),
+          value: 'meter'.plural(user.suggestionRange),
           onTap: user.isPremium ? () => _onRecommendationRangeTap(context, ref) : null,
         ),
         SettingsTitle(title: 'about'.tr()),
@@ -50,7 +50,7 @@ class SettingsPage extends ConsumerWidget {
       context: context,
       builder: (context) => SimpleDialog(
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        title: Text('recommendation_range'.tr()),
+        title: Text('suggestion_range'.tr()),
         children: [
           DialogListTile(
             title: Text('distance.close'.tr()),

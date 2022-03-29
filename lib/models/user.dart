@@ -7,31 +7,31 @@ class User {
   @HiveField(0, defaultValue: false)
   final bool isRealPremium;
   @HiveField(1, defaultValue: 200)
-  final int recommendationRange;
+  final int suggestionRange;
   @HiveField(2)
   final DateTime? trial;
 
   const User({
     required this.isRealPremium,
-    required this.recommendationRange,
+    required this.suggestionRange,
     this.trial,
   });
 
   factory User.template() {
     return const User(
       isRealPremium: false,
-      recommendationRange: 200,
+      suggestionRange: 200,
     );
   }
 
   User copyWith({
     bool? isRealPremium,
-    int? recommendationRange,
+    int? suggestionRange,
     DateTime? trial,
   }) {
     return User(
       isRealPremium: isRealPremium ?? this.isRealPremium,
-      recommendationRange: recommendationRange ?? this.recommendationRange,
+      suggestionRange: suggestionRange ?? this.suggestionRange,
       trial: trial ?? this.trial,
     );
   }
