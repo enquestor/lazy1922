@@ -70,7 +70,7 @@ class MessagesPage extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: 6, right: 4),
           child: Text(
-            DateFormat('h:m a').format(record.time),
+            DateFormat('h:mm a').format(record.time),
             style: Theme.of(context).textTheme.caption,
           ),
         ),
