@@ -85,6 +85,10 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
   @override
   Widget build(BuildContext context) {
     final reversedRecordsWithDates = ref.watch(_reversedRecordsWithDatesProvider).toList();
+    final pendingMessage = ref.watch(pendingMessageProvider);
+    if (pendingMessage != null) {
+      reversedRecordsWithDates.insert(0, pendingMessage);
+    }
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       reverse: true,
@@ -94,7 +98,7 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
         if (item is DateTime) {
           return _buildDate(item);
         } else if (item is Record) {
-          return _buildRecord(item);
+          return _buildRecord(item, pending: pendingMessage != null && index == 0);
         } else {
           return const SizedBox();
         }
@@ -117,54 +121,57 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
     );
   }
 
-  Widget _buildRecord(Record record) {
+  Widget _buildRecord(Record record, {bool pending = false}) {
     final isPlaceMode = ref.watch(isPlaceModeProvider);
     final placeMap = ref.watch(placesMapProvider);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 4, right: 8),
-            child: Text(
-              DateFormat('h:mm a').format(record.time),
-              style: Theme.of(context).textTheme.caption,
-            ),
-          ),
-          Flexible(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.75,
-              child: Container(
-                decoration: record.isLocationAvailable
-                    ? BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : BoxDecoration(
-                        border: Border.all(color: Theme.of(context).colorScheme.primary),
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.transparent,
-                      ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 10, top: 8),
-                      child: Text(
-                        isPlaceMode && placeMap.containsKey(record.code) ? placeMap[record.code]!.name : record.message,
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 16, color: record.isLocationAvailable ? Colors.white : null),
-                      ),
-                    ),
-                    onLongPress: () => _onRecordLongPress(record),
-                  ),
-                ),
-                clipBehavior: Clip.antiAliasWithSaveLayer,
+      child: Opacity(
+        opacity: pending ? 0.5 : 1,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4, right: 8),
+              child: Text(
+                pending ? '${'sending'.tr()} ...' : DateFormat('h:mm a').format(record.time),
+                style: Theme.of(context).textTheme.caption,
               ),
             ),
-          ),
-        ],
+            Flexible(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.75,
+                child: Container(
+                  decoration: record.isLocationAvailable
+                      ? BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Theme.of(context).colorScheme.primary,
+                        )
+                      : BoxDecoration(
+                          border: Border.all(color: Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.transparent,
+                        ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 12, right: 12, bottom: 10, top: 8),
+                        child: Text(
+                          isPlaceMode && placeMap.containsKey(record.code) ? placeMap[record.code]!.name : record.message,
+                          style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 16, color: record.isLocationAvailable ? Colors.white : null),
+                        ),
+                      ),
+                      onLongPress: () => _onRecordLongPress(record),
+                    ),
+                  ),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
