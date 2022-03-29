@@ -5,7 +5,7 @@ AppBarTheme appBarTheme(BuildContext context, Brightness brightness) => AppBarTh
       elevation: 0,
       centerTitle: true,
       titleTextStyle: Theme.of(context).textTheme.headline6!.copyWith(color: brightness == Brightness.light ? Colors.black : Colors.white),
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: Colors.grey,
       ),
     );

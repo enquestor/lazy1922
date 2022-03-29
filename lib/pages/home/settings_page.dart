@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/providers/user_provider.dart';
+import 'package:lazy1922/widgets/dialog_list_tile.dart';
 import 'package:lazy1922/widgets/settings_item.dart';
 import 'package:lazy1922/widgets/settings_title.dart';
 import 'package:vrouter/vrouter.dart';
@@ -48,19 +49,20 @@ class SettingsPage extends ConsumerWidget {
     final range = await showDialog<int>(
       context: context,
       builder: (context) => SimpleDialog(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
         title: Text('recommendation_range'.tr()),
         children: [
-          SimpleDialogOption(
-            child: Text('distance.close'.tr()),
-            onPressed: () => Navigator.of(context).pop(50),
+          DialogListTile(
+            title: Text('distance.close'.tr()),
+            onTap: () => Navigator.of(context).pop(50),
           ),
-          SimpleDialogOption(
-            child: Text('distance.normal'.tr()),
-            onPressed: () => Navigator.of(context).pop(200),
+          DialogListTile(
+            title: Text('distance.normal'.tr()),
+            onTap: () => Navigator.of(context).pop(200),
           ),
-          SimpleDialogOption(
-            child: Text('distance.far'.tr()),
-            onPressed: () => Navigator.of(context).pop(500),
+          DialogListTile(
+            title: Text('distance.far'.tr()),
+            onTap: () => Navigator.of(context).pop(500),
           ),
         ],
       ),
@@ -74,20 +76,22 @@ class SettingsPage extends ConsumerWidget {
 
   void _onLanguageTap(BuildContext context) async {
     final locale = await showDialog<Locale>(
-        context: context,
-        builder: (context) => SimpleDialog(
-              title: Text('language'.tr()),
-              children: [
-                SimpleDialogOption(
-                  child: Text('zh_TW'.tr()),
-                  onPressed: () => Navigator.of(context).pop(const Locale('zh', 'TW')),
-                ),
-                SimpleDialogOption(
-                  child: Text('en_US'.tr()),
-                  onPressed: () => Navigator.of(context).pop(const Locale('en', 'US')),
-                ),
-              ],
-            ));
+      context: context,
+      builder: (context) => SimpleDialog(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        title: Text('language'.tr()),
+        children: [
+          DialogListTile(
+            title: Text('zh_TW'.tr()),
+            onTap: () => Navigator.of(context).pop(const Locale('zh', 'TW')),
+          ),
+          DialogListTile(
+            title: Text('en_US'.tr()),
+            onTap: () => Navigator.of(context).pop(const Locale('en', 'US')),
+          ),
+        ],
+      ),
+    );
 
     if (locale == null) {
       return;

@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lazy1922/consts.dart';
 import 'package:lazy1922/models/record.dart';
 
 class RecordsNotifier extends StateNotifier<List<Record>> {
   Box<List> get box => Hive.box<List>("records");
 
-  RecordsNotifier() : super((Hive.box<List>("records").get('records') ?? []).cast<Record>());
+  RecordsNotifier() : super((Hive.box<List>("records").get('records') ?? []).cast<Record>()..sort((a, b) => a.time.compareTo(b.time)));
 
   @override
   bool updateShouldNotify(List<Record> old, List<Record> current) => true;
@@ -17,7 +18,20 @@ class RecordsNotifier extends StateNotifier<List<Record>> {
   }
 
   void add(Record record) {
-    state = [record, ...state];
+    state = [...state, record];
+  }
+
+  void redeemLastLocation(double latitude, double longitude) {
+    if (DateTime.now().difference(state.last.time).inSeconds < maxLocationRedeemTime) {
+      state = [
+        ...state.take(state.length - 1),
+        state.last.copyWith(latitude: latitude, longitude: longitude),
+      ];
+    }
+  }
+
+  void removeRecord(Record record) {
+    state = state..removeWhere((r) => r.time == record.time);
   }
 }
 

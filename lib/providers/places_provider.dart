@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/place.dart';
 
 class PlacesNotifier extends StateNotifier<List<Place>> {
@@ -40,3 +41,11 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
 }
 
 final placesProvider = StateNotifierProvider<PlacesNotifier, List<Place>>((ref) => PlacesNotifier());
+final placesMapProvider = Provider<Map<Code, Place>>((ref) {
+  final places = ref.watch(placesProvider);
+  final placesMap = <Code, Place>{};
+  for (final place in places) {
+    placesMap[place.code] = place;
+  }
+  return placesMap;
+});

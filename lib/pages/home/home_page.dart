@@ -8,12 +8,13 @@ import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/providers/is_edit_mode_provider.dart';
+import 'package:lazy1922/providers/pending_message_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
-import 'package:lazy1922/providers/records_provider.dart';
 import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:lazy1922/widgets/ccpi.dart';
+import 'package:lazy1922/widgets/edit_place_dialog.dart';
 import 'package:tuple/tuple.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -23,8 +24,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final places = ref.watch(placesProvider);
-    final isEditMode = ref.watch(isEditModeProvider);
-    final showAddPlaceGuide = places.isEmpty && !isEditMode;
+    final showAddPlaceGuide = places.isEmpty;
     final child = Padding(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
       child: Column(
@@ -48,18 +48,13 @@ class HomePage extends ConsumerWidget {
   Widget _buildPlacesList(WidgetRef ref) {
     final isEditMode = ref.watch(isEditModeProvider);
     final places = ref.watch(placesProvider);
-    final children = List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList());
     return ReorderableBuilder(
-      lockedIndices: [children.length],
       enableDraggable: isEditMode,
       enableLongPress: true,
       dragChildBoxDecoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
       ),
-      children: [
-        ...children,
-        const AddCard(key: Key('addCard')),
-      ],
+      children: List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList()),
       onReorder: (orderUpdateEntities) {
         final placesNotifier = ref.read(placesProvider.notifier);
         for (var entity in orderUpdateEntities) {
@@ -145,7 +140,7 @@ class RecommendationCard extends ConsumerWidget {
         color: Theme.of(context).colorScheme.primary,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: recommendedPlace.when(
-          data: (data) => _buildRecommendationCard(context, data.item1, data.item2),
+          data: (data) => _buildRecommendationCard(context, ref, data.item1, data.item2),
           error: (error, _) => _buildScanCard(ref),
           loading: () => const CCPI(),
         ),
@@ -153,7 +148,7 @@ class RecommendationCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecommendationCard(BuildContext context, Place place, double distance) {
+  Widget _buildRecommendationCard(BuildContext context, WidgetRef ref, Place place, double distance) {
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -185,7 +180,13 @@ class RecommendationCard extends ConsumerWidget {
           ],
         ),
       ),
-      onTap: () => sendMessage(place.message),
+      onTap: () {
+        final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
+        pendingMessageNotifier.state = Record.fromPlace(place);
+
+        final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
+        selectedPageNotifier.state = SelectedPage.messages;
+      },
     );
   }
 
@@ -248,7 +249,11 @@ class PlaceCard extends ConsumerWidget {
     if (isEditMode) {
       _editPlace(context, ref);
     } else {
-      sendMessage(place.message);
+      final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
+      pendingMessageNotifier.state = Record.fromPlace(place);
+
+      final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
+      selectedPageNotifier.state = SelectedPage.messages;
     }
   }
 
@@ -265,131 +270,14 @@ class PlaceCard extends ConsumerWidget {
             placesNotifier.edit(place);
           }
         },
-        onDelete: () => placesNotifier.remove(place),
-      ),
-    );
-  }
-}
-
-class EditPlaceDialog extends StatelessWidget {
-  final Place place;
-  final bool isAdd;
-  final void Function(Place place) onConfirm;
-  final void Function()? onDelete;
-  const EditPlaceDialog({
-    Key? key,
-    required this.place,
-    required this.onConfirm,
-    this.onDelete,
-    this.isAdd = false,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final _nameController = TextEditingController(text: place.name);
-    return AlertDialog(
-      title: Text(isAdd ? 'add_place'.tr() : 'edit_place'.tr()),
-      content: Padding(
-        padding: const EdgeInsets.only(top: 24),
-        child: TextField(
-          controller: _nameController,
-          decoration: InputDecoration(labelText: 'name'.tr()),
-        ),
-      ),
-      actions: [
-        Visibility(
-          visible: !isAdd,
-          child: TextButton(
-            child: Text('delete'.tr(), style: const TextStyle(color: Colors.red)),
-            style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.red.withOpacity(0.2))),
-            onPressed: () {
-              if (onDelete != null) {
-                onDelete!();
-              }
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        TextButton(
-          child: Text('ok'.tr()),
-          onPressed: () {
-            onConfirm(place.copyWith(name: _nameController.text));
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class AddCard extends ConsumerWidget {
-  const AddCard({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isEditMode = ref.watch(isEditModeProvider);
-    return Visibility(
-      visible: isEditMode,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Card(
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          child: InkWell(
-            child: const Center(
-              child: Icon(Icons.add),
-            ),
-            onTap: () => _addPlace(context, ref),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _addPlace(BuildContext context, WidgetRef ref) async {
-    final records = ref.watch(recordsProvider);
-    final places = ref.watch(placesProvider);
-    final availableRecords = records.where((record) => !places.contains(record)).toList();
-    if (availableRecords.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('no_available_records'.tr())),
-      );
-      return;
-    }
-
-    final index = await showDialog<int>(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text('select_record'.tr()),
-        children: availableRecords
-            .asMap()
-            .entries
-            .map(
-              (entry) => RecordOption(
-                record: entry.value,
-                onTap: () => Navigator.of(context).pop(entry.key),
-              ),
-            )
-            .toList(),
-      ),
-    );
-
-    if (index == null) {
-      return;
-    }
-
-    showDialog(
-      context: context,
-      builder: (context) => EditPlaceDialog(
-        place: Place.fromRecord(availableRecords[index], ''),
-        onConfirm: (place) {
-          if (place.name.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('name_cannot_be_empty'.tr())));
-          } else {
-            final placesNotifier = ref.read(placesProvider.notifier);
-            placesNotifier.add(place);
+        onDelete: () {
+          placesNotifier.remove(place);
+          final places = ref.read(placesProvider);
+          if (places.isEmpty) {
+            final isEditModeNotifier = ref.read(isEditModeProvider.notifier);
+            isEditModeNotifier.state = false;
           }
         },
-        isAdd: true,
       ),
     );
   }

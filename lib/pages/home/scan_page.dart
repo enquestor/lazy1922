@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/record.dart';
-import 'package:lazy1922/providers/places_provider.dart';
-import 'package:lazy1922/providers/records_provider.dart';
-import 'package:lazy1922/providers/user_provider.dart';
-import 'package:lazy1922/utils.dart';
+import 'package:lazy1922/models/selected_page.dart';
+import 'package:lazy1922/providers/pending_message_provider.dart';
+import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanPage extends ConsumerWidget {
@@ -15,11 +14,11 @@ class ScanPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MobileScanner(
       allowDuplicates: false,
-      onDetect: (barcode, args) => _onNewScan(context, ref, barcode),
+      onDetect: (barcode, args) => _onNewScan(ref, barcode),
     );
   }
 
-  void _onNewScan(BuildContext context, WidgetRef ref, Barcode barcode) async {
+  void _onNewScan(WidgetRef ref, Barcode barcode) async {
     // ignore if not sms code
     if (barcode.sms == null) {
       return;
@@ -32,33 +31,16 @@ class ScanPage extends ConsumerWidget {
     }
     final message = sms.message!;
 
-    sendMessage(message);
+    // set pending message
+    final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
+    pendingMessageNotifier.state = Record(
+      code: Code.parse(message),
+      message: message,
+      time: DateTime.now(),
+    );
 
-    final user = ref.read(userProvider);
-    if (!user.isPremium) {
-      return;
-    }
-
-    try {
-      final location = await getLocation();
-      final records = ref.read(recordsProvider);
-      final places = ref.read(placesProvider);
-      final record = Record(
-        code: Code.parse(message),
-        message: message,
-        latitude: location.latitude,
-        longitude: location.longitude,
-        time: DateTime.now(),
-      );
-
-      if (!records.contains(record) && !places.contains(record)) {
-        final recordsNotifier = ref.read(recordsProvider.notifier);
-        recordsNotifier.add(record);
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.toString())),
-      );
-    }
+    // change page to messages
+    final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
+    selectedPageNotifier.state = SelectedPage.messages;
   }
 }
