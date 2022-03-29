@@ -28,9 +28,9 @@ class SettingsPage extends ConsumerWidget {
         ),
         SettingsTitle(title: 'premium_settings'.tr()),
         SettingsItem(
-          title: 'recommendation_range'.tr(),
-          value: 'meter'.plural(user.recommendationRange),
-          onTap: user.isPremium ? () => _onRecommendationRangeTap(context, ref) : null,
+          title: 'suggestion_range'.tr(),
+          value: 'meter'.plural(user.suggestionRange),
+          onTap: user.isPremium ? () => _onSuggestionRangeTap(context, ref) : null,
         ),
         SettingsTitle(title: 'about'.tr()),
         SettingsItem(
@@ -45,12 +45,12 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  void _onRecommendationRangeTap(BuildContext context, WidgetRef ref) async {
+  void _onSuggestionRangeTap(BuildContext context, WidgetRef ref) async {
     final range = await showDialog<int>(
       context: context,
       builder: (context) => SimpleDialog(
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        title: Text('recommendation_range'.tr()),
+        title: Text('suggestion_range'.tr()),
         children: [
           DialogListTile(
             title: Text('distance.close'.tr()),
@@ -70,7 +70,7 @@ class SettingsPage extends ConsumerWidget {
 
     if (range != null) {
       final userNotifier = ref.watch(userProvider.notifier);
-      userNotifier.setRecommendationRange(range);
+      userNotifier.setSuggestionRange(range);
     }
   }
 

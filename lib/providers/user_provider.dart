@@ -27,8 +27,8 @@ class UserNotifer extends StateNotifier<User> {
     }
   }
 
-  void setRecommendationRange(int range) {
-    state = state.copyWith(recommendationRange: range);
+  void setSuggestionRange(int range) {
+    state = state.copyWith(suggestionRange: range);
   }
 
   void startTrial() {

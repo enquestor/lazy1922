@@ -18,6 +18,30 @@ import 'package:lazy1922/widgets/edit_place_dialog.dart';
 import 'package:tuple/tuple.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+final _suggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
+  // use toList to make full copy so that sort doesn't mess with provided list
+  final places = ref.watch(placesProvider).toList();
+
+  if (places.isEmpty) {
+    throw LazyError.noSavedPlaces;
+  }
+
+  final location = await getLocation();
+  places.sort((a, b) {
+    final distanceA = Geolocator.distanceBetween(a.latitude, a.longitude, location.latitude, location.longitude);
+    final distanceB = Geolocator.distanceBetween(b.latitude, b.longitude, location.latitude, location.longitude);
+    return distanceA.compareTo(distanceB);
+  });
+
+  final suggestedPlace = places.first;
+  final distance = Geolocator.distanceBetween(suggestedPlace.latitude, suggestedPlace.longitude, location.latitude, location.longitude);
+  final suggestionRange = ref.watch(userProvider).suggestionRange;
+  if (distance > suggestionRange) {
+    throw LazyError.noSuggestionInRange;
+  }
+  return Tuple2(suggestedPlace, distance);
+});
+
 class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -31,7 +55,7 @@ class HomePage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           HomeTitle(title: 'suggestion'.tr()),
-          const RecommendationCard(),
+          const SuggestionCard(),
           const SizedBox(height: 32),
           HomeTitle(title: 'favorites'.tr()),
           showAddPlaceGuide ? _buildAddPlaceGuide() : _buildPlacesList(ref),
@@ -103,44 +127,44 @@ class HomeTitle extends StatelessWidget {
   }
 }
 
-final _recommendedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
-  // use toList to make full copy so that sort doesn't mess with provided list
-  final places = ref.watch(placesProvider).toList();
-
-  if (places.isEmpty) {
-    throw LazyError.noSavedPlaces;
-  }
-
-  final location = await getLocation();
-  places.sort((a, b) {
-    final distanceA = Geolocator.distanceBetween(a.latitude, a.longitude, location.latitude, location.longitude);
-    final distanceB = Geolocator.distanceBetween(b.latitude, b.longitude, location.latitude, location.longitude);
-    return distanceA.compareTo(distanceB);
-  });
-
-  final recommendedPlace = places.first;
-  final distance = Geolocator.distanceBetween(recommendedPlace.latitude, recommendedPlace.longitude, location.latitude, location.longitude);
-  final recommendationRange = ref.watch(userProvider).recommendationRange;
-  if (distance > recommendationRange) {
-    throw LazyError.noRecommendationInRange;
-  }
-  return Tuple2(recommendedPlace, distance);
-});
-
-class RecommendationCard extends ConsumerWidget {
-  const RecommendationCard({Key? key}) : super(key: key);
+class SuggestionCard extends ConsumerStatefulWidget {
+  const SuggestionCard({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final recommendedPlace = ref.watch(_recommendedPlaceProvider);
+  ConsumerState<ConsumerStatefulWidget> createState() => _SuggestionCardState();
+}
+
+class _SuggestionCardState extends ConsumerState<SuggestionCard> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ref.refresh(_suggestedPlaceProvider);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final suggestedPlace = ref.watch(_suggestedPlaceProvider);
     return SizedBox(
       height: 160,
       width: double.infinity,
       child: Card(
         color: Theme.of(context).colorScheme.primary,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: recommendedPlace.when(
-          data: (data) => _buildRecommendationCard(context, ref, data.item1, data.item2),
+        child: suggestedPlace.when(
+          data: (data) => _buildSuggestionCard(context, ref, data.item1, data.item2),
           error: (error, _) => _buildScanCard(ref),
           loading: () => const CCPI(),
         ),
@@ -148,7 +172,7 @@ class RecommendationCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecommendationCard(BuildContext context, WidgetRef ref, Place place, double distance) {
+  Widget _buildSuggestionCard(BuildContext context, WidgetRef ref, Place place, double distance) {
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.all(12),
