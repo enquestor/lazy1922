@@ -9,6 +9,7 @@ import 'package:lazy1922/providers/is_place_mode_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/records_provider.dart';
 import 'package:lazy1922/utils.dart';
+import 'package:lazy1922/widgets/dialog_list_tile.dart';
 import 'package:lazy1922/widgets/edit_place_dialog.dart';
 
 final _reversedRecordsWithDatesProvider = Provider<List>((ref) {
@@ -122,8 +123,8 @@ class MessagesPage extends ConsumerWidget {
 
   void _onRecordLongPress(BuildContext context, WidgetRef ref, Record record) async {
     final placeMap = ref.read(placesMapProvider);
-    List<ListTile> children = [
-      ListTile(
+    List<DialogListTile> children = [
+      DialogListTile(
         title: Text(
           'delete_message'.tr(),
           style: const TextStyle(color: Colors.red),
@@ -133,7 +134,7 @@ class MessagesPage extends ConsumerWidget {
     ];
     if (record.isLocationAvailable && !placeMap.containsKey(record.code)) {
       children = [
-        ListTile(
+        DialogListTile(
           title: Text('add_to_favorites'.tr()),
           onTap: () => Navigator.of(context).pop(RecordAction.addToFavorites),
         ),
