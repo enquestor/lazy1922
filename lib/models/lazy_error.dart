@@ -1,4 +1,4 @@
 enum LazyError {
   noSavedPlaces,
-  noRecommendationInRange,
+  noSuggestionInRange,
 }

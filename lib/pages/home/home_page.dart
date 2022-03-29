@@ -31,7 +31,7 @@ class HomePage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           HomeTitle(title: 'suggestion'.tr()),
-          const RecommendationCard(),
+          const SuggestionCard(),
           const SizedBox(height: 32),
           HomeTitle(title: 'favorites'.tr()),
           showAddPlaceGuide ? _buildAddPlaceGuide() : _buildPlacesList(ref),
@@ -122,13 +122,13 @@ final _suggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>
   final distance = Geolocator.distanceBetween(suggestedPlace.latitude, suggestedPlace.longitude, location.latitude, location.longitude);
   final suggestionRange = ref.watch(userProvider).suggestionRange;
   if (distance > suggestionRange) {
-    throw LazyError.noRecommendationInRange;
+    throw LazyError.noSuggestionInRange;
   }
   return Tuple2(suggestedPlace, distance);
 });
 
-class RecommendationCard extends ConsumerWidget {
-  const RecommendationCard({Key? key}) : super(key: key);
+class SuggestionCard extends ConsumerWidget {
+  const SuggestionCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -140,7 +140,7 @@ class RecommendationCard extends ConsumerWidget {
         color: Theme.of(context).colorScheme.primary,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: suggestedPlace.when(
-          data: (data) => _buildRecommendationCard(context, ref, data.item1, data.item2),
+          data: (data) => _buildSuggestionCard(context, ref, data.item1, data.item2),
           error: (error, _) => _buildScanCard(ref),
           loading: () => const CCPI(),
         ),
@@ -148,7 +148,7 @@ class RecommendationCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecommendationCard(BuildContext context, WidgetRef ref, Place place, double distance) {
+  Widget _buildSuggestionCard(BuildContext context, WidgetRef ref, Place place, double distance) {
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.all(12),

@@ -30,7 +30,7 @@ class SettingsPage extends ConsumerWidget {
         SettingsItem(
           title: 'suggestion_range'.tr(),
           value: 'meter'.plural(user.suggestionRange),
-          onTap: user.isPremium ? () => _onRecommendationRangeTap(context, ref) : null,
+          onTap: user.isPremium ? () => _onSuggestionRangeTap(context, ref) : null,
         ),
         SettingsTitle(title: 'about'.tr()),
         SettingsItem(
@@ -45,7 +45,7 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  void _onRecommendationRangeTap(BuildContext context, WidgetRef ref) async {
+  void _onSuggestionRangeTap(BuildContext context, WidgetRef ref) async {
     final range = await showDialog<int>(
       context: context,
       builder: (context) => SimpleDialog(
@@ -70,7 +70,7 @@ class SettingsPage extends ConsumerWidget {
 
     if (range != null) {
       final userNotifier = ref.watch(userProvider.notifier);
-      userNotifier.setRecommendationRange(range);
+      userNotifier.setSuggestionRange(range);
     }
   }
 
