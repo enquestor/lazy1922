@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,7 +51,11 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
       final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
       if (pendingMessage != null) {
         // send message
-        await sendMessage(pendingMessage.message);
+        if (Platform.isAndroid) {
+          await sendBackgroundSMS(pendingMessage.message);
+        } else if (Platform.isIOS) {
+          await sendSMS(pendingMessage.message);
+        }
 
         // add record
         final recordsNotifier = ref.read(recordsProvider.notifier);
