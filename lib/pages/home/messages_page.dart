@@ -53,7 +53,7 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
 
         // add record
         final recordsNotifier = ref.read(recordsProvider.notifier);
-        recordsNotifier.add(pendingMessage);
+        recordsNotifier.add(pendingMessage.copyWith(time: DateTime.now()));
 
         // clear pending message
         pendingMessageNotifier.state = null;
