@@ -164,15 +164,15 @@ class _SuggestionCardState extends ConsumerState<SuggestionCard> with WidgetsBin
         color: Theme.of(context).colorScheme.primary,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: suggestedPlace.when(
-          data: (data) => _buildSuggestionCard(context, ref, data.item1, data.item2),
-          error: (error, _) => _buildScanCard(ref),
+          data: (data) => _buildSuggestionCard(data.item1, data.item2),
+          error: (error, _) => _buildScanCard(),
           loading: () => const CCPI(),
         ),
       ),
     );
   }
 
-  Widget _buildSuggestionCard(BuildContext context, WidgetRef ref, Place place, double distance) {
+  Widget _buildSuggestionCard(Place place, double distance) {
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -214,7 +214,7 @@ class _SuggestionCardState extends ConsumerState<SuggestionCard> with WidgetsBin
     );
   }
 
-  Widget _buildScanCard(WidgetRef ref) {
+  Widget _buildScanCard() {
     final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
     return InkWell(
       child: const Icon(Icons.camera_alt_outlined, color: Colors.white),
