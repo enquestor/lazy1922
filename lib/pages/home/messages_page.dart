@@ -1,13 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/record_action.dart';
 import 'package:lazy1922/providers/is_place_mode_provider.dart';
+import 'package:lazy1922/providers/pending_message_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/records_provider.dart';
+import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:lazy1922/widgets/dialog_list_tile.dart';
 import 'package:lazy1922/widgets/edit_place_dialog.dart';
@@ -31,11 +32,58 @@ final _reversedRecordsWithDatesProvider = Provider<List>((ref) {
   return reversedRecordsWithDates;
 });
 
-class MessagesPage extends ConsumerWidget {
+class MessagesPage extends ConsumerStatefulWidget {
   const MessagesPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _MessagesPageState();
+}
+
+class _MessagesPageState extends ConsumerState<MessagesPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      // send pending message
+      final pendingMessage = ref.read(pendingMessageProvider);
+      final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
+      if (pendingMessage != null) {
+        // send message
+        await sendMessage(pendingMessage.message);
+
+        // add record
+        final recordsNotifier = ref.read(recordsProvider.notifier);
+        recordsNotifier.add(pendingMessage);
+
+        // clear pending message
+        pendingMessageNotifier.state = null;
+
+        // no need to get location if user isn't premium
+        final user = ref.read(userProvider);
+        if (!user.isPremium) {
+          return;
+        }
+
+        // no needto get location if location is already available
+        if (pendingMessage.isLocationAvailable) {
+          return;
+        }
+
+        // redeem location
+        try {
+          final location = await getLocation();
+          recordsNotifier.redeemLastLocation(location.latitude, location.longitude);
+        } catch (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(error.toString())),
+          );
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final reversedRecordsWithDates = ref.watch(_reversedRecordsWithDatesProvider).toList();
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -44,9 +92,9 @@ class MessagesPage extends ConsumerWidget {
       itemBuilder: (context, index) {
         final item = reversedRecordsWithDates[index];
         if (item is DateTime) {
-          return _buildDate(context, item);
+          return _buildDate(item);
         } else if (item is Record) {
-          return _buildRecord(context, ref, item);
+          return _buildRecord(item);
         } else {
           return const SizedBox();
         }
@@ -54,7 +102,7 @@ class MessagesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildDate(BuildContext context, DateTime date) {
+  Widget _buildDate(DateTime date) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -69,7 +117,7 @@ class MessagesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecord(BuildContext context, WidgetRef ref, Record record) {
+  Widget _buildRecord(Record record) {
     final isPlaceMode = ref.watch(isPlaceModeProvider);
     final placeMap = ref.watch(placesMapProvider);
     return Padding(
@@ -109,7 +157,7 @@ class MessagesPage extends ConsumerWidget {
                         style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 16, color: record.isLocationAvailable ? Colors.white : null),
                       ),
                     ),
-                    onLongPress: () => _onRecordLongPress(context, ref, record),
+                    onLongPress: () => _onRecordLongPress(record),
                   ),
                 ),
                 clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -121,7 +169,7 @@ class MessagesPage extends ConsumerWidget {
     );
   }
 
-  void _onRecordLongPress(BuildContext context, WidgetRef ref, Record record) async {
+  void _onRecordLongPress(Record record) async {
     final placeMap = ref.read(placesMapProvider);
     List<DialogListTile> children = [
       DialogListTile(
@@ -132,6 +180,7 @@ class MessagesPage extends ConsumerWidget {
         onTap: () => Navigator.of(context).pop(RecordAction.delete),
       ),
     ];
+    // add option to add to favorites if reasonable
     if (record.isLocationAvailable && !placeMap.containsKey(record.code)) {
       children = [
         DialogListTile(

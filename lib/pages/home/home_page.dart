@@ -8,8 +8,8 @@ import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/providers/is_edit_mode_provider.dart';
+import 'package:lazy1922/providers/pending_message_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
-import 'package:lazy1922/providers/records_provider.dart';
 import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/utils.dart';
@@ -140,7 +140,7 @@ class RecommendationCard extends ConsumerWidget {
         color: Theme.of(context).colorScheme.primary,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: recommendedPlace.when(
-          data: (data) => _buildRecommendationCard(context, data.item1, data.item2),
+          data: (data) => _buildRecommendationCard(context, ref, data.item1, data.item2),
           error: (error, _) => _buildScanCard(ref),
           loading: () => const CCPI(),
         ),
@@ -148,7 +148,7 @@ class RecommendationCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecommendationCard(BuildContext context, Place place, double distance) {
+  Widget _buildRecommendationCard(BuildContext context, WidgetRef ref, Place place, double distance) {
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -180,7 +180,13 @@ class RecommendationCard extends ConsumerWidget {
           ],
         ),
       ),
-      onTap: () => sendMessage(place.message),
+      onTap: () {
+        final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
+        pendingMessageNotifier.state = Record.fromPlace(place);
+
+        final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
+        selectedPageNotifier.state = SelectedPage.messages;
+      },
     );
   }
 
@@ -243,7 +249,9 @@ class PlaceCard extends ConsumerWidget {
     if (isEditMode) {
       _editPlace(context, ref);
     } else {
-      sendMessage(place.message);
+      final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
+      pendingMessageNotifier.state = Record.fromPlace(place);
+
       final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
       selectedPageNotifier.state = SelectedPage.messages;
     }

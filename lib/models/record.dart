@@ -1,5 +1,6 @@
 import 'package:lazy1922/models/code.dart';
 import 'package:hive/hive.dart';
+import 'package:lazy1922/models/place.dart';
 
 part 'record.g.dart';
 
@@ -31,6 +32,16 @@ class Record {
       time: DateTime.parse(json["time"]),
       latitude: json["latitude"],
       longitude: json["longitude"],
+    );
+  }
+
+  factory Record.fromPlace(Place place) {
+    return Record(
+      code: place.code,
+      message: place.message,
+      time: place.time,
+      latitude: place.latitude,
+      longitude: place.longitude,
     );
   }
 

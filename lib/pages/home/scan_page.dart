@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/selected_page.dart';
-import 'package:lazy1922/providers/records_provider.dart';
+import 'package:lazy1922/providers/pending_message_provider.dart';
 import 'package:lazy1922/providers/selected_page_provider.dart';
-import 'package:lazy1922/providers/user_provider.dart';
-import 'package:lazy1922/utils.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanPage extends ConsumerWidget {
@@ -33,34 +31,16 @@ class ScanPage extends ConsumerWidget {
     }
     final message = sms.message!;
 
-    await sendMessage(message);
-
-    // add record
-    final record = Record(
+    // set pending message
+    final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
+    pendingMessageNotifier.state = Record(
       code: Code.parse(message),
       message: message,
       time: DateTime.now(),
     );
-    final recordsNotifier = ref.read(recordsProvider.notifier);
-    recordsNotifier.add(record);
 
     // change page to messages
     final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
     selectedPageNotifier.state = SelectedPage.messages;
-
-    final user = ref.read(userProvider);
-    if (!user.isPremium) {
-      return;
-    }
-
-    try {
-      // defer location task to instantly show record in UI
-      final location = await getLocation();
-      recordsNotifier.redeemLastLocation(location.latitude, location.longitude);
-    } catch (error) {
-      // ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-      //   SnackBar(content: Text(error.toString())),
-      // );
-    }
   }
 }
