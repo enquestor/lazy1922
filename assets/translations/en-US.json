@@ -49,14 +49,13 @@
         "one": "{} meter",
         "other": "{} meters"
     },
-    "minute": {
-        "one": "{} minute",
-        "other": "{} minutes"
+    "within_meter": {
+        "one": "Within {} meter",
+        "other": "Withon {} meters"
     },
-    "distance": {
-        "close": "50 meters",
-        "normal": "200 meters",
-        "far": "500 meters"
+    "after_minute_idle": {
+        "one": "After {} minute idle",
+        "other": "After {} minutes idle"
     },
     "never": "Never",
     "language": "Language",

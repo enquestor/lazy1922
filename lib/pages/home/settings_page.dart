@@ -36,12 +36,13 @@ class SettingsPage extends ConsumerWidget {
         ),
         SettingsItem(
           title: 'auto_return'.tr(),
+          value: 'after_minute_idle'.plural(user.autoReturn),
           onTap: () => _onAutoReturnTap(context, ref),
         ),
         SettingsTitle(title: 'premium_settings'.tr()),
         SettingsItem(
           title: 'suggestion_range'.tr(),
-          value: 'meter'.plural(user.suggestionRange),
+          value: 'within_meter'.plural(user.suggestionRange),
           onTap: user.isPremium ? () => _onSuggestionRangeTap(context, ref) : null,
         ),
         SettingsTitle(title: 'about'.tr()),
@@ -61,23 +62,16 @@ class SettingsPage extends ConsumerWidget {
     final range = await showDialog<int>(
       context: context,
       builder: (context) => SimpleDialog(
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        title: Text('suggestion_range'.tr()),
-        children: [
-          DialogListTile(
-            title: Text('distance.close'.tr()),
-            onTap: () => Navigator.of(context).pop(50),
-          ),
-          DialogListTile(
-            title: Text('distance.normal'.tr()),
-            onTap: () => Navigator.of(context).pop(200),
-          ),
-          DialogListTile(
-            title: Text('distance.far'.tr()),
-            onTap: () => Navigator.of(context).pop(500),
-          ),
-        ],
-      ),
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          title: Text('suggestion_range'.tr()),
+          children: suggestionRangeOptions
+              .map(
+                (suggestionRange) => DialogListTile(
+                  title: Text('after_minute_idle'.plural(suggestionRange)),
+                  onTap: () => suggestionRange,
+                ),
+              )
+              .toList()),
     );
 
     if (range != null) {
@@ -92,24 +86,20 @@ class SettingsPage extends ConsumerWidget {
       builder: (context) => SimpleDialog(
         clipBehavior: Clip.antiAliasWithSaveLayer,
         title: Text('language'.tr()),
-        children: [
-          DialogListTile(
-            title: Text('zh_TW'.tr()),
-            onTap: () => Navigator.of(context).pop(const Locale('zh', 'TW')),
-          ),
-          DialogListTile(
-            title: Text('en_US'.tr()),
-            onTap: () => Navigator.of(context).pop(const Locale('en', 'US')),
-          ),
-        ],
+        children: context.supportedLocales
+            .map(
+              (locale) => DialogListTile(
+                title: Text(locale.toString().tr()),
+                onTap: () => Navigator.of(context).pop(locale),
+              ),
+            )
+            .toList(),
       ),
     );
 
-    if (locale == null) {
-      return;
+    if (locale != null) {
+      context.setLocale(locale);
     }
-
-    context.setLocale(locale);
   }
 
   void _onAutoReturnTap(BuildContext context, WidgetRef ref) async {
@@ -120,7 +110,7 @@ class SettingsPage extends ConsumerWidget {
         title: Text('auto_return'.tr()),
         children: [
           ...autoReturnOptions.map((autoReturn) => DialogListTile(
-                title: Text('minute'.plural(autoReturn)),
+                title: Text('after_minute_idle'.plural(autoReturn)),
                 onTap: () => Navigator.of(context).pop(autoReturn),
               )),
           DialogListTile(
