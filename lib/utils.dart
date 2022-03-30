@@ -32,15 +32,6 @@ Future<void> sendSMS(String message) async {
   }
 }
 
-Future<void> sendBackgroundSMS(String message) async {
-  await Permission.sms.request();
-
-  await BackgroundSms.sendMessage(
-    phoneNumber: '1922',
-    message: message,
-  );
-}
-
 DateTime date(DateTime time) {
   return DateTime(time.year, time.month, time.day);
 }

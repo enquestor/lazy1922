@@ -50,12 +50,8 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
       final pendingMessage = ref.read(pendingMessageProvider);
       final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
       if (pendingMessage != null) {
-        // send message
-        if (Platform.isAndroid) {
-          await sendBackgroundSMS(pendingMessage.message);
-        } else if (Platform.isIOS) {
-          await sendSMS(pendingMessage.message);
-        }
+        // send sms
+        await sendSMS(pendingMessage.message);
 
         // add record
         final recordsNotifier = ref.read(recordsProvider.notifier);
