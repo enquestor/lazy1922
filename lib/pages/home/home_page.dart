@@ -355,7 +355,7 @@ class RecordOption extends StatelessWidget {
     return ListTile(
       title: Padding(
         padding: const EdgeInsets.only(left: 8.0),
-        child: Text(DateFormat('M/d - hh:mm a').format(record.time)),
+        child: Text(DateFormat('M/d - hh:mm a', context.locale.toString()).format(record.time)),
       ),
       subtitle: Padding(
         padding: const EdgeInsets.only(left: 8.0),

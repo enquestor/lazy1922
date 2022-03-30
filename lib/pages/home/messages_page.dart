@@ -156,7 +156,7 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
         Padding(
           padding: const EdgeInsets.only(top: 16, bottom: 8),
           child: Text(
-            DateFormat('EEEE, MMMM d').format(date),
+            DateFormat('EEEE, MMMM d', context.locale.toString()).format(date),
             style: Theme.of(context).textTheme.caption,
           ),
         ),
@@ -178,7 +178,12 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 4, right: 8),
               child: Text(
-                pending ? '${'sending'.tr()} ...' : DateFormat('h:mm a').format(record.time),
+                pending
+                    ? '${'sending'.tr()} ...'
+                    : DateFormat(
+                        context.locale == const Locale('zh', 'TW') ? 'a h:mm' : 'h:mm a',
+                        context.locale.toString(),
+                      ).format(record.time),
                 style: Theme.of(context).textTheme.caption,
               ),
             ),
