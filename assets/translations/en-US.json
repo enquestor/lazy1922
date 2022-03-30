@@ -22,7 +22,6 @@
     "lazy1922_premium": "Lazy1922 Premium",
     "premium_settings": "Premium Settings",
     "privacy_policy": "Privacy Policy",
-    "privacy_policy_message": "Lazy1922 only uses your GPS and stores all data locally. No data is sent to the server.",
     "about": "About",
     "about_message": "Lazy1922 is a tool to help you scan 1922 SMS messages.",
     "add_favorites_guide": "To add to your favorites:\n\n1. Scan a QR code first.\n2. Tap on the \"Messages\" tab below. \n3. Long press the message you just sent.\n4. Give it a name, and you're done!",

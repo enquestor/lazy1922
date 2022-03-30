@@ -5,6 +5,7 @@ import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/widgets/dialog_list_tile.dart';
 import 'package:lazy1922/widgets/settings_item.dart';
 import 'package:lazy1922/widgets/settings_title.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vrouter/vrouter.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -40,7 +41,7 @@ class SettingsPage extends ConsumerWidget {
         SettingsTitle(title: 'about'.tr()),
         SettingsItem(
           title: 'privacy_policy'.tr(),
-          onTap: () => showDialog(context: context, builder: (context) => const PrivacyDialog()),
+          onTap: () => launch(privacyPolicyLink),
         ),
         SettingsItem(
           title: 'about'.tr(),
@@ -127,24 +128,6 @@ class SettingsPage extends ConsumerWidget {
       final userNotifier = ref.watch(userProvider.notifier);
       userNotifier.setAutoReturn(result);
     }
-  }
-}
-
-class PrivacyDialog extends StatelessWidget {
-  const PrivacyDialog({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('privacy_policy'.tr()),
-      content: Text('privacy_policy_message'.tr()),
-      actions: [
-        TextButton(
-          child: Text('ok'.tr()),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ],
-    );
   }
 }
 
