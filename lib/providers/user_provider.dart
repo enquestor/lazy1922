@@ -27,6 +27,10 @@ class UserNotifer extends StateNotifier<User> {
     }
   }
 
+  void setAutoReturn(int autoReturn) {
+    state = state.copyWith(autoReturn: autoReturn);
+  }
+
   void setSuggestionRange(int range) {
     state = state.copyWith(suggestionRange: range);
   }

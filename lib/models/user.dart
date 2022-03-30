@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:lazy1922/consts.dart';
 
 part 'user.g.dart';
 
@@ -10,17 +11,21 @@ class User {
   final int suggestionRange;
   @HiveField(2)
   final DateTime? trial;
+  @HiveField(3, defaultValue: defaultAutoReturn)
+  final int autoReturn;
 
   const User({
     required this.isRealPremium,
     required this.suggestionRange,
     this.trial,
+    required this.autoReturn,
   });
 
   factory User.template() {
     return const User(
       isRealPremium: false,
       suggestionRange: 200,
+      autoReturn: defaultAutoReturn,
     );
   }
 
@@ -28,11 +33,13 @@ class User {
     bool? isRealPremium,
     int? suggestionRange,
     DateTime? trial,
+    int? autoReturn,
   }) {
     return User(
       isRealPremium: isRealPremium ?? this.isRealPremium,
       suggestionRange: suggestionRange ?? this.suggestionRange,
       trial: trial ?? this.trial,
+      autoReturn: autoReturn ?? this.autoReturn,
     );
   }
 

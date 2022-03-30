@@ -9,6 +9,9 @@ import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/user.dart';
+import 'package:lazy1922/providers/inactive_start_time_provider.dart';
+import 'package:lazy1922/providers/selected_page_provider.dart';
+import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/screens/home_screen.dart';
 import 'package:lazy1922/screens/premium_screen.dart';
 import 'package:lazy1922/theme.dart';
@@ -55,8 +58,39 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final user = ref.read(userProvider);
+      final inactiveStartTime = ref.read(inactiveStartTimeProvider);
+      if (DateTime.now().difference(inactiveStartTime).inMinutes >= user.autoReturn) {
+        ref.refresh(selectedPageProvider);
+      }
+    } else if (state == AppLifecycleState.paused) {
+      final inactiveStartTimeNotifier = ref.read(inactiveStartTimeProvider.notifier);
+      inactiveStartTimeNotifier.state = DateTime.now();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

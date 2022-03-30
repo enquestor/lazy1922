@@ -50,12 +50,18 @@
         "one": "{} meter",
         "other": "{} meters"
     },
+    "minute": {
+        "one": "{} minute",
+        "other": "{} minutes"
+    },
     "distance": {
         "close": "50 meters",
         "normal": "200 meters",
         "far": "500 meters"
     },
+    "never": "Never",
     "language": "Language",
     "zh_TW": "Chinese (Traditional)",
-    "en_US": "English (US)"
+    "en_US": "English (US)",
+    "auto_return": "Return to Default Page"
  }

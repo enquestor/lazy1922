@@ -46,6 +46,10 @@
     "purchase_cancelled": "購買中斷",
     "unknown_error": "未知錯誤",
     "suggestion_range": "推薦範圍",
+    "minute": {
+        "one": "{} 分鐘",
+        "other": "{} 分鐘"
+    },
     "meter": {
         "one": "{} 公尺",
         "other": "{} 公尺"
@@ -55,7 +59,9 @@
         "normal": "200 公尺",
         "far": "500 公尺"
     },
+    "never": "永不",
     "language": "語言",
     "zh_TW": "中文 (繁體)",
-    "en_US": "英文 (美國)"
+    "en_US": "英文 (美國)",
+    "auto_return": "自動跳回預設頁面"
 }
