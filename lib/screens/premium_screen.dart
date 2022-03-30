@@ -57,6 +57,7 @@ class PremiumScreen extends ConsumerWidget {
 
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
+      systemOverlayStyle: SystemUiOverlayStyle.light,
       leading: IconButton(
         icon: const Icon(Icons.chevron_left, color: Colors.white),
         splashRadius: 20,
