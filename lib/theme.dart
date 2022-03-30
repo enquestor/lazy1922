@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 AppBarTheme appBarTheme(BuildContext context, Brightness brightness) => AppBarTheme(
+      systemOverlayStyle: brightness == Brightness.light ? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,

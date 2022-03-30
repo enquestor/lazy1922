@@ -22,7 +22,6 @@
     "lazy1922_premium": "超級懶人實聯制",
     "premium_settings": "超級懶人設定",
     "privacy_policy": "隱私權政策",
-    "privacy_policy_message": "懶人實聯制只會使用 GPS，所有資料都存在手機上，並不會傳送到伺服器。",
     "about": "關於",
     "about_message": "懶人實聯制是個能幫助你更方便掃描實聯制簡訊的程式。",
     "add_favorites_guide": "透過以下步驟新增地點至最愛：\n\n1. 掃描實聯制\n2. 點擊下方「訊息」按鈕\n3. 長按剛剛掃描的訊息\n4. 點選「加到最愛」然後給他個名字",
@@ -46,18 +45,17 @@
     "purchase_cancelled": "購買中斷",
     "unknown_error": "未知錯誤",
     "suggestion_range": "推薦範圍",
-    "minute": {
-        "one": "{} 分鐘",
-        "other": "{} 分鐘"
+    "after_minute_idle": {
+        "one": "閒置 {} 分鐘後",
+        "other": "閒置 {} 分鐘後"
     },
     "meter": {
         "one": "{} 公尺",
         "other": "{} 公尺"
     },
-    "distance": {
-        "close": "50 公尺",
-        "normal": "200 公尺",
-        "far": "500 公尺"
+    "within_meter": {
+        "one": "{} 公尺內",
+        "other": "{} 公尺內"
     },
     "never": "永不",
     "language": "語言",

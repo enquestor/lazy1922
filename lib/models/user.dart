@@ -7,7 +7,7 @@ part 'user.g.dart';
 class User {
   @HiveField(0, defaultValue: false)
   final bool isRealPremium;
-  @HiveField(1, defaultValue: 200)
+  @HiveField(1, defaultValue: defaultSuggestionRange)
   final int suggestionRange;
   @HiveField(2)
   final DateTime? trial;
@@ -24,7 +24,7 @@ class User {
   factory User.template() {
     return const User(
       isRealPremium: false,
-      suggestionRange: 200,
+      suggestionRange: defaultSuggestionRange,
       autoReturn: defaultAutoReturn,
     );
   }
