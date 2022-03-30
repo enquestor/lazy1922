@@ -1,6 +1,4 @@
 PODS:
-  - background_sms (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
   - flutter_sms (1.1.0):
     - Flutter
@@ -68,8 +66,6 @@ PODS:
   - nanopb/encode (2.30908.0)
   - path_provider_ios (0.0.1):
     - Flutter
-  - permission_handler_apple (9.0.2):
-    - Flutter
   - PromisesObjC (2.0.0)
   - Protobuf (3.19.4)
   - Purchases (3.13.2):
@@ -88,14 +84,12 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - background_sms (from `.symlinks/plugins/background_sms/ios`)
   - Flutter (from `Flutter`)
   - flutter_sms (from `.symlinks/plugins/flutter_sms/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - mobile_scanner (from `.symlinks/plugins/mobile_scanner/ios`)
   - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
-  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
@@ -121,8 +115,6 @@ SPEC REPOS:
     - PurchasesHybridCommon
 
 EXTERNAL SOURCES:
-  background_sms:
-    :path: ".symlinks/plugins/background_sms/ios"
   Flutter:
     :path: Flutter
   flutter_sms:
@@ -135,8 +127,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/move_to_background/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
-  permission_handler_apple:
-    :path: ".symlinks/plugins/permission_handler_apple/ios"
   purchases_flutter:
     :path: ".symlinks/plugins/purchases_flutter/ios"
   share_plus:
@@ -147,7 +137,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  background_sms: ead2469d0ef3b811cf68bc09670c38cf80b13a6e
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_sms: 91ce41530f55c85d6524d82307a5d555844c086a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
@@ -165,7 +154,6 @@ SPEC CHECKSUMS:
   move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
-  permission_handler_apple: d21b38e1a4b2e041c63af9568f9165e114e507a6
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   Protobuf: 235750e4696ff59fb07d949a9dbbc92b3c0700fe
   Purchases: 03200de9288724e77de435000d1828601e6b8e00

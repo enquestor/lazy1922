@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lazy1922/consts.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/widgets/dialog_list_tile.dart';
 import 'package:lazy1922/widgets/settings_item.dart';
@@ -25,6 +26,10 @@ class SettingsPage extends ConsumerWidget {
         SettingsItem(
           title: 'language'.tr(),
           onTap: () => _onLanguageTap(context),
+        ),
+        SettingsItem(
+          title: 'auto_return'.tr(),
+          onTap: () => _onAutoReturnTap(context, ref),
         ),
         SettingsTitle(title: 'premium_settings'.tr()),
         SettingsItem(
@@ -98,6 +103,30 @@ class SettingsPage extends ConsumerWidget {
     }
 
     context.setLocale(locale);
+  }
+
+  void _onAutoReturnTap(BuildContext context, WidgetRef ref) async {
+    final result = await showDialog<int>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        title: Text('auto_return'.tr()),
+        children: [
+          ...autoReturnOptions.map((autoReturn) => DialogListTile(
+                title: Text('minute'.plural(autoReturn)),
+                onTap: () => Navigator.of(context).pop(autoReturn),
+              )),
+          DialogListTile(
+            title: Text('never'.tr()),
+            onTap: () => Navigator.of(context).pop(999999999999),
+          ),
+        ],
+      ),
+    );
+    if (result != null) {
+      final userNotifier = ref.watch(userProvider.notifier);
+      userNotifier.setAutoReturn(result);
+    }
   }
 }
 
