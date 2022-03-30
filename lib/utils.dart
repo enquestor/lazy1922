@@ -1,10 +1,8 @@
 import 'dart:developer';
 
-import 'package:background_sms/background_sms.dart';
 import 'package:flutter_sms/flutter_sms.dart' as flutter_sms;
 import 'package:geolocator/geolocator.dart';
 import 'package:lazy1922/models/lazy_location_error.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 Future<Position> getLocation() async {
   // check if service is enabled
