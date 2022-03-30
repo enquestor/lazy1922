@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,42 +44,46 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      // send pending message
-      final pendingMessage = ref.read(pendingMessageProvider);
-      final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
-      if (pendingMessage != null) {
-        // send sms
-        await sendSMS(pendingMessage.message);
-
-        // add record
-        final recordsNotifier = ref.read(recordsProvider.notifier);
-        recordsNotifier.add(pendingMessage.copyWith(time: DateTime.now()));
-
-        // clear pending message
-        pendingMessageNotifier.state = null;
-
-        // no need to get location if user isn't premium
-        final user = ref.read(userProvider);
-        if (!user.isPremium) {
-          return;
-        }
-
-        // no needto get location if location is already available
-        if (pendingMessage.isLocationAvailable) {
-          return;
-        }
-
-        // redeem location
-        try {
-          final location = await getLocation();
-          recordsNotifier.redeemLastLocation(location.latitude, location.longitude);
-        } catch (error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error.toString())),
-          );
-        }
-      }
+      _sendPendingMessage();
     });
+  }
+
+  void _sendPendingMessage() async {
+    // send pending message
+    final pendingMessage = ref.read(pendingMessageProvider);
+    final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
+    if (pendingMessage != null) {
+      // send sms
+      await sendSMS(pendingMessage.message);
+
+      // add record
+      final recordsNotifier = ref.read(recordsProvider.notifier);
+      recordsNotifier.add(pendingMessage.copyWith(time: DateTime.now()));
+
+      // clear pending message
+      pendingMessageNotifier.state = null;
+
+      // no need to get location if user isn't premium
+      final user = ref.read(userProvider);
+      if (!user.isPremium) {
+        return;
+      }
+
+      // no needto get location if location is already available
+      if (pendingMessage.isLocationAvailable) {
+        return;
+      }
+
+      // redeem location
+      try {
+        final location = await getLocation();
+        recordsNotifier.redeemLastLocation(location.latitude, location.longitude);
+      } catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error.toString())),
+        );
+      }
+    }
   }
 
   @override
