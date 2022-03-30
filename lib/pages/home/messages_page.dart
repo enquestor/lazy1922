@@ -15,6 +15,7 @@ import 'package:lazy1922/widgets/edit_place_dialog.dart';
 
 final _reversedRecordsWithDatesProvider = Provider<List>((ref) {
   final reversedRecords = ref.watch(recordsProvider).reversed.toList();
+
   if (reversedRecords.isEmpty) {
     return [];
   }
@@ -29,6 +30,11 @@ final _reversedRecordsWithDatesProvider = Provider<List>((ref) {
     reversedRecordsWithDates.add(record);
   }
   reversedRecordsWithDates.add(date(reversedRecords.last.time));
+
+  final pendingMessage = ref.watch(pendingMessageProvider);
+  if (pendingMessage != null) {
+    reversedRecordsWithDates.add(pendingMessage);
+  }
   return reversedRecordsWithDates;
 });
 
@@ -88,11 +94,44 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final reversedRecordsWithDates = ref.watch(_reversedRecordsWithDatesProvider).toList();
+    final reversedRecordsWithDates = ref.watch(_reversedRecordsWithDatesProvider);
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: reversedRecordsWithDates.isEmpty ? _buildNoMessageBody() : _buildMessagesList(),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    final isPlaceMode = ref.watch(isPlaceModeProvider);
+    final isPlaceModeNotifier = ref.read(isPlaceModeProvider.notifier);
+    return AppBar(
+      title: const Text('1922'),
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.location_on_outlined,
+            color: isPlaceMode ? Theme.of(context).colorScheme.primary : null,
+          ),
+          splashRadius: 20,
+          onPressed: () => isPlaceModeNotifier.state = !isPlaceModeNotifier.state,
+        )
+      ],
+    );
+  }
+
+  Widget _buildNoMessageBody() {
+    return Center(
+      child: Icon(
+        Icons.message_outlined,
+        size: MediaQuery.of(context).size.width * 0.3,
+        color: Theme.of(context).textTheme.caption!.color!.withOpacity(0.2),
+      ),
+    );
+  }
+
+  Widget _buildMessagesList() {
+    final reversedRecordsWithDates = ref.watch(_reversedRecordsWithDatesProvider);
     final pendingMessage = ref.watch(pendingMessageProvider);
-    if (pendingMessage != null) {
-      reversedRecordsWithDates.insert(0, pendingMessage);
-    }
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       reverse: true,

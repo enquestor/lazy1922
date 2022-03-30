@@ -6,9 +6,7 @@ import 'package:lazy1922/pages/home/messages_page.dart';
 import 'package:lazy1922/pages/home/scan_page.dart';
 import 'package:lazy1922/pages/home/settings_page.dart';
 import 'package:lazy1922/providers/is_place_mode_provider.dart';
-import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/selected_page_provider.dart';
-import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -28,24 +26,9 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: _buildAppBar(context, ref),
       body: _buildBody(ref),
       bottomNavigationBar: _buildNavigationBar(ref),
-      floatingActionButton: _buildFloatingActionButton(context, ref),
     );
-  }
-
-  Widget? _buildFloatingActionButton(BuildContext context, WidgetRef ref) {
-    final currentPage = ref.watch(selectedPageProvider);
-    final isEditMode = ref.watch(isEditModeProvider);
-    if (currentPage == SelectedPage.home) {
-      return FloatingActionButton(
-        onPressed: () => _onFabPressed(context, ref),
-        child: isEditMode ? const Icon(Icons.close) : const Icon(Icons.edit),
-      );
-    } else {
-      return null;
-    }
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context, WidgetRef ref) {
@@ -140,22 +123,5 @@ class HomeScreen extends ConsumerWidget {
       },
       destinations: destinations,
     );
-  }
-
-  void _onFabPressed(BuildContext context, WidgetRef ref) async {
-    final isEditMode = ref.read(isEditModeProvider);
-    final isEditModeNotifier = ref.read(isEditModeProvider.notifier);
-    final places = ref.read(placesProvider);
-
-    if (places.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('add_place_first'.tr())));
-      return;
-    }
-
-    if (isEditMode) {
-      isEditModeNotifier.state = false;
-    } else {
-      isEditModeNotifier.state = true;
-    }
   }
 }

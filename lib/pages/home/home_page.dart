@@ -7,7 +7,6 @@ import 'package:lazy1922/models/lazy_error.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/selected_page.dart';
-import 'package:lazy1922/providers/is_edit_mode_provider.dart';
 import 'package:lazy1922/providers/pending_message_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/selected_page_provider.dart';
@@ -18,6 +17,7 @@ import 'package:lazy1922/widgets/edit_place_dialog.dart';
 import 'package:tuple/tuple.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+final _isEditModeProvider = StateProvider.autoDispose<bool>((ref) => false);
 final _suggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
   // use toList to make full copy so that sort doesn't mess with provided list
   final places = ref.watch(placesProvider).toList();
@@ -49,7 +49,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final places = ref.watch(placesProvider);
     final showAddPlaceGuide = places.isEmpty;
-    final child = Padding(
+    final body = Padding(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,15 +62,53 @@ class HomePage extends ConsumerWidget {
         ],
       ),
     );
+
     if (showAddPlaceGuide) {
-      return child;
+      return Scaffold(
+        appBar: _buildAppBar(),
+        body: body,
+        floatingActionButton: _buildFloatingActionButton(context, ref),
+      );
     } else {
-      return SingleChildScrollView(child: child);
+      return Scaffold(
+        appBar: _buildAppBar(),
+        body: SingleChildScrollView(child: body),
+        floatingActionButton: _buildFloatingActionButton(context, ref),
+      );
+    }
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(title: Text('home'.tr()));
+  }
+
+  Widget _buildFloatingActionButton(BuildContext context, WidgetRef ref) {
+    final isEditMode = ref.watch(_isEditModeProvider);
+    return FloatingActionButton(
+      onPressed: () => _onFabPressed(context, ref),
+      child: isEditMode ? const Icon(Icons.close) : const Icon(Icons.edit),
+    );
+  }
+
+  void _onFabPressed(BuildContext context, WidgetRef ref) async {
+    final isEditMode = ref.read(_isEditModeProvider);
+    final isEditModeNotifier = ref.read(_isEditModeProvider.notifier);
+    final places = ref.read(placesProvider);
+
+    if (places.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('add_place_first'.tr())));
+      return;
+    }
+
+    if (isEditMode) {
+      isEditModeNotifier.state = false;
+    } else {
+      isEditModeNotifier.state = true;
     }
   }
 
   Widget _buildPlacesList(WidgetRef ref) {
-    final isEditMode = ref.watch(isEditModeProvider);
+    final isEditMode = ref.watch(_isEditModeProvider);
     final places = ref.watch(placesProvider);
     return ReorderableBuilder(
       enableDraggable: isEditMode,
@@ -229,7 +267,7 @@ class PlaceCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isEditMode = ref.watch(isEditModeProvider);
+    final isEditMode = ref.watch(_isEditModeProvider);
     return ShakeWidget(
       duration: const Duration(seconds: 1),
       shakeConstant: ShakeLittleConstant1(),
@@ -298,7 +336,7 @@ class PlaceCard extends ConsumerWidget {
           placesNotifier.remove(place);
           final places = ref.read(placesProvider);
           if (places.isEmpty) {
-            final isEditModeNotifier = ref.read(isEditModeProvider.notifier);
+            final isEditModeNotifier = ref.read(_isEditModeProvider.notifier);
             isEditModeNotifier.state = false;
           }
         },

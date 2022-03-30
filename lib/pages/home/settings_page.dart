@@ -14,8 +14,14 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
+    return Scaffold(
+      appBar: AppBar(title: Text('settings'.tr())),
+      body: _buildSettings(context, ref),
+    );
+  }
 
+  Widget _buildSettings(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

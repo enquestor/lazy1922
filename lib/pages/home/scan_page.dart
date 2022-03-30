@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/models/code.dart';
@@ -12,9 +13,12 @@ class ScanPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MobileScanner(
-      allowDuplicates: false,
-      onDetect: (barcode, args) => _onNewScan(ref, barcode),
+    return Scaffold(
+      appBar: AppBar(title: Text('scan'.tr())),
+      body: MobileScanner(
+        allowDuplicates: false,
+        onDetect: (barcode, args) => _onNewScan(ref, barcode),
+      ),
     );
   }
 
