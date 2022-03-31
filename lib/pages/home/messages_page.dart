@@ -36,7 +36,7 @@ final _reversedRecordsWithDatesProvider = Provider<List>((ref) {
     reversedRecordsWithDates.add(pendingMessage);
   }
   return reversedRecordsWithDates;
-});
+}, dependencies: [recordsProvider, pendingMessageProvider]);
 
 class MessagesPage extends ConsumerStatefulWidget {
   const MessagesPage({Key? key}) : super(key: key);

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lazy1922/models/lazy_purchase_error.dart';
 import 'package:lazy1922/pages/home/home_page.dart';
+import 'package:lazy1922/pages/home/messages_page.dart';
 import 'package:lazy1922/pages/premium/demo_page.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/widgets/feature.dart';
@@ -97,19 +98,20 @@ class PremiumScreen extends ConsumerWidget {
             style: Theme.of(context).textTheme.headline6,
           ),
         ),
-        Feature(
+        const Feature(
           name: 'favorite_places',
           icon: Icons.favorite_outline,
           demo: FavoritePlacesDemo(),
         ),
-        Feature(
+        const Feature(
           name: 'smart_suggestions',
           icon: Icons.location_on_outlined,
           demo: SmartSuggestionDemo(),
         ),
         const Feature(
-          name: 'home_widgets',
-          icon: Icons.dashboard_outlined,
+          name: 'message_history',
+          icon: Icons.message_outlined,
+          demo: MessageHistoryDemo(),
         ),
         const Feature(
           name: 'backup_and_restore',
@@ -245,6 +247,17 @@ class SmartSuggestionDemo extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class MessageHistoryDemo extends StatelessWidget {
+  const MessageHistoryDemo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DemoPage(
+      child: MessagesPage(),
     );
   }
 }

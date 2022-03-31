@@ -49,4 +49,4 @@ final placesMapProvider = Provider<Map<Code, Place>>((ref) {
     placesMap[place.code] = place;
   }
   return placesMap;
-});
+}, dependencies: [placesProvider]);
