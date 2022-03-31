@@ -56,7 +56,7 @@ class HomePage extends ConsumerWidget {
         children: [
           const Suggestion(),
           const SizedBox(height: 32),
-          showAddPlaceGuide ? _buildAddPlaceGuide() : Favorites(),
+          showAddPlaceGuide ? _buildAddPlaceGuide() : const Favorites(),
         ],
       ),
     );
