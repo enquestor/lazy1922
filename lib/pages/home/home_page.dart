@@ -53,10 +53,10 @@ class HomePage extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Suggestion(),
-          SizedBox(height: 32),
-          Favorites(),
+        children: [
+          const Suggestion(),
+          const SizedBox(height: 32),
+          showAddPlaceGuide ? _buildAddPlaceGuide() : const Favorites(),
         ],
       ),
     );
@@ -78,6 +78,14 @@ class HomePage extends ConsumerWidget {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(title: Text('home'.tr()));
+  }
+
+  Expanded _buildAddPlaceGuide() {
+    return Expanded(
+      child: Center(
+        child: Text('add_favorites_guide'.tr()),
+      ),
+    );
   }
 
   Widget _buildFloatingActionButton(BuildContext context, WidgetRef ref) {
@@ -112,51 +120,31 @@ class Favorites extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final places = ref.watch(placesProvider);
-    final showAddPlaceGuide = places.isEmpty;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        HomeTitle(title: 'favorites'.tr()),
-        showAddPlaceGuide ? _buildAddPlaceGuide() : _buildPlacesList(ref),
-      ],
-    );
-  }
-
-  Widget _buildPlacesList(WidgetRef ref) {
     final isEditMode = ref.watch(_isEditModeProvider);
-    final places = ref.watch(placesProvider);
     return ReorderableBuilder(
-        enableDraggable: isEditMode,
-        enableLongPress: true,
-        dragChildBoxDecoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+      enableDraggable: isEditMode,
+      enableLongPress: true,
+      dragChildBoxDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      children: List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList()),
+      onReorder: (orderUpdateEntities) {
+        final placesNotifier = ref.read(placesProvider.notifier);
+        for (var entity in orderUpdateEntities) {
+          placesNotifier.move(entity.oldIndex, entity.newIndex);
+        }
+      },
+      builder: (children, scrollController) => GridView(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        controller: scrollController,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.4,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 4,
         ),
-        children: List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList()),
-        onReorder: (orderUpdateEntities) {
-          final placesNotifier = ref.read(placesProvider.notifier);
-          for (var entity in orderUpdateEntities) {
-            placesNotifier.move(entity.oldIndex, entity.newIndex);
-          }
-        },
-        builder: (children, scrollController) => GridView(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              controller: scrollController,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.4,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 4,
-              ),
-              children: children,
-            ));
-  }
-
-  Expanded _buildAddPlaceGuide() {
-    return Expanded(
-      child: Center(
-        child: Text('add_favorites_guide'.tr()),
+        children: children,
       ),
     );
   }

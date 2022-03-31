@@ -22,39 +22,41 @@ class SettingsPage extends ConsumerWidget {
 
   Widget _buildSettings(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SettingsTitle(title: 'user'.tr()),
-        SettingsItem(
-          title: 'lazy1922_premium'.tr(),
-          onTap: () => context.vRouter.toNamed('premium'),
-        ),
-        SettingsItem(
-          title: 'language'.tr(),
-          onTap: () => _onLanguageTap(context),
-        ),
-        SettingsItem(
-          title: 'auto_return'.tr(),
-          value: 'after_minute_idle'.plural(user.autoReturn),
-          onTap: () => _onAutoReturnTap(context, ref),
-        ),
-        SettingsTitle(title: 'premium_settings'.tr()),
-        SettingsItem(
-          title: 'suggestion_range'.tr(),
-          value: 'within_meter'.plural(user.suggestionRange),
-          onTap: user.isPremium ? () => _onSuggestionRangeTap(context, ref) : null,
-        ),
-        SettingsTitle(title: 'about'.tr()),
-        SettingsItem(
-          title: 'privacy_policy'.tr(),
-          onTap: () => launch(privacyPolicyLink),
-        ),
-        SettingsItem(
-          title: 'about'.tr(),
-          onTap: () => showDialog(context: context, builder: (context) => const AboutDialog()),
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SettingsTitle(title: 'user'.tr()),
+          SettingsItem(
+            title: 'lazy1922_premium'.tr(),
+            onTap: () => context.vRouter.toNamed('premium'),
+          ),
+          SettingsItem(
+            title: 'language'.tr(),
+            onTap: () => _onLanguageTap(context),
+          ),
+          SettingsItem(
+            title: 'auto_return'.tr(),
+            value: 'after_minute_idle'.plural(user.autoReturn),
+            onTap: () => _onAutoReturnTap(context, ref),
+          ),
+          SettingsTitle(title: 'premium_settings'.tr()),
+          SettingsItem(
+            title: 'suggestion_range'.tr(),
+            value: 'within_meter'.plural(user.suggestionRange),
+            onTap: user.isPremium ? () => _onSuggestionRangeTap(context, ref) : null,
+          ),
+          SettingsTitle(title: 'about'.tr()),
+          SettingsItem(
+            title: 'privacy_policy'.tr(),
+            onTap: () => launch(privacyPolicyLink),
+          ),
+          SettingsItem(
+            title: 'about'.tr(),
+            onTap: () => showDialog(context: context, builder: (context) => const AboutDialog()),
+          ),
+        ],
+      ),
     );
   }
 
@@ -67,7 +69,7 @@ class SettingsPage extends ConsumerWidget {
           children: suggestionRangeOptions
               .map(
                 (suggestionRange) => DialogListTile(
-                  title: Text('after_minute_idle'.plural(suggestionRange)),
+                  title: Text('within_meter'.plural(suggestionRange)),
                   onTap: () => suggestionRange,
                 ),
               )
