@@ -35,8 +35,9 @@ final demoPlaces = [
 final demoPlacesProvider = StateNotifierProvider<PlacesNotifier, List<Place>>((ref) => PlacesNotifier.override(demoPlaces));
 final demoSuggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) => Future.value(Tuple2(demoPlaces[2], 0.4)));
 
-class DemoHomePage extends StatelessWidget {
-  const DemoHomePage({Key? key}) : super(key: key);
+class DemoPage extends StatelessWidget {
+  final Widget child;
+  const DemoPage({Key? key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class DemoHomePage extends StatelessWidget {
           placesProvider.overrideWithProvider(demoPlacesProvider),
           suggestedPlaceProvider.overrideWithProvider(demoSuggestedPlaceProvider),
         ],
-        child: const HomePage(),
+        child: child,
       ),
     );
   }

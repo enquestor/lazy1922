@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lazy1922/models/lazy_purchase_error.dart';
-import 'package:lazy1922/pages/premium/demo_home_page.dart';
+import 'package:lazy1922/pages/home/home_page.dart';
+import 'package:lazy1922/pages/premium/demo_page.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/widgets/feature.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -104,7 +105,7 @@ class PremiumScreen extends ConsumerWidget {
         Feature(
           name: 'smart_suggestions',
           icon: Icons.location_on_outlined,
-          demo: Container(),
+          demo: SmartSuggestionDemo(),
         ),
         const Feature(
           name: 'home_widgets',
@@ -213,6 +214,37 @@ class FavoritePlacesDemo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const DemoHomePage();
+    return DemoPage(
+      child: Scaffold(
+        appBar: AppBar(title: Text('home'.tr())),
+        body: const Padding(
+          padding: EdgeInsets.all(18),
+          child: Favorites(),
+        ),
+      ),
+    );
+  }
+}
+
+class SmartSuggestionDemo extends StatelessWidget {
+  const SmartSuggestionDemo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DemoPage(
+      child: Scaffold(
+        appBar: AppBar(title: Text('home'.tr())),
+        body: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            children: const [
+              Suggestion(),
+              SizedBox(height: 32),
+              Favorites(),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
