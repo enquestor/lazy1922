@@ -7,6 +7,7 @@ class RecordsNotifier extends StateNotifier<List<Record>> {
   Box<List> get box => Hive.box<List>("records");
 
   RecordsNotifier() : super((Hive.box<List>("records").get('records') ?? []).cast<Record>()..sort((a, b) => a.time.compareTo(b.time)));
+  RecordsNotifier.override(List<Record> records) : super(records);
 
   @override
   bool updateShouldNotify(List<Record> old, List<Record> current) => true;

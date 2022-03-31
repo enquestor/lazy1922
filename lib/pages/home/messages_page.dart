@@ -36,7 +36,7 @@ final _reversedRecordsWithDatesProvider = Provider<List>((ref) {
     reversedRecordsWithDates.add(pendingMessage);
   }
   return reversedRecordsWithDates;
-});
+}, dependencies: [recordsProvider, pendingMessageProvider]);
 
 class MessagesPage extends ConsumerStatefulWidget {
   const MessagesPage({Key? key}) : super(key: key);
@@ -167,6 +167,7 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
   Widget _buildRecord(Record record, {bool pending = false}) {
     final isPlaceMode = ref.watch(isPlaceModeProvider);
     final placeMap = ref.watch(placesMapProvider);
+    final shouldShowPlaceName = isPlaceMode && placeMap.containsKey(record.code);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Opacity(
@@ -206,9 +207,22 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
                     child: InkWell(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 12, right: 12, bottom: 10, top: 8),
-                        child: Text(
-                          isPlaceMode && placeMap.containsKey(record.code) ? placeMap[record.code]!.name : record.message,
-                          style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 16, color: record.isLocationAvailable ? Colors.white : null),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            shouldShowPlaceName
+                                ? const Padding(
+                                    padding: EdgeInsets.only(left: 4, right: 12, top: 6, bottom: 2),
+                                    child: Icon(Icons.location_on_outlined),
+                                  )
+                                : const SizedBox(),
+                            Expanded(
+                              child: Text(
+                                shouldShowPlaceName ? placeMap[record.code]!.name : record.message,
+                                style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 16, color: record.isLocationAvailable ? Colors.white : null),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       onLongPress: () => _onRecordLongPress(record),

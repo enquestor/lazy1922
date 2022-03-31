@@ -18,7 +18,7 @@ import 'package:tuple/tuple.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 final _isEditModeProvider = StateProvider.autoDispose<bool>((ref) => false);
-final _suggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
+final suggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
   // use toList to make full copy so that sort doesn't mess with provided list
   final places = ref.watch(placesProvider).toList();
 
@@ -53,12 +53,10 @@ class HomePage extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          HomeTitle(title: 'suggestion'.tr()),
-          const SuggestionCard(),
-          const SizedBox(height: 32),
-          HomeTitle(title: 'favorites'.tr()),
-          showAddPlaceGuide ? _buildAddPlaceGuide() : _buildPlacesList(ref),
+        children: const [
+          Suggestion(),
+          SizedBox(height: 32),
+          Favorites(),
         ],
       ),
     );
@@ -106,36 +104,53 @@ class HomePage extends ConsumerWidget {
       isEditModeNotifier.state = true;
     }
   }
+}
+
+class Favorites extends ConsumerWidget {
+  const Favorites({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final places = ref.watch(placesProvider);
+    final showAddPlaceGuide = places.isEmpty;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        HomeTitle(title: 'favorites'.tr()),
+        showAddPlaceGuide ? _buildAddPlaceGuide() : _buildPlacesList(ref),
+      ],
+    );
+  }
 
   Widget _buildPlacesList(WidgetRef ref) {
     final isEditMode = ref.watch(_isEditModeProvider);
     final places = ref.watch(placesProvider);
     return ReorderableBuilder(
-      enableDraggable: isEditMode,
-      enableLongPress: true,
-      dragChildBoxDecoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      children: List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList()),
-      onReorder: (orderUpdateEntities) {
-        final placesNotifier = ref.read(placesProvider.notifier);
-        for (var entity in orderUpdateEntities) {
-          placesNotifier.move(entity.oldIndex, entity.newIndex);
-        }
-      },
-      builder: (children, scrollController) => GridView(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        controller: scrollController,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1.4,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 4,
+        enableDraggable: isEditMode,
+        enableLongPress: true,
+        dragChildBoxDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
         ),
-        children: children,
-      ),
-    );
+        children: List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList()),
+        onReorder: (orderUpdateEntities) {
+          final placesNotifier = ref.read(placesProvider.notifier);
+          for (var entity in orderUpdateEntities) {
+            placesNotifier.move(entity.oldIndex, entity.newIndex);
+          }
+        },
+        builder: (children, scrollController) => GridView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              controller: scrollController,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.4,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 4,
+              ),
+              children: children,
+            ));
   }
 
   Expanded _buildAddPlaceGuide() {
@@ -165,14 +180,14 @@ class HomeTitle extends StatelessWidget {
   }
 }
 
-class SuggestionCard extends ConsumerStatefulWidget {
-  const SuggestionCard({Key? key}) : super(key: key);
+class Suggestion extends ConsumerStatefulWidget {
+  const Suggestion({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SuggestionCardState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SuggestionState();
 }
 
-class _SuggestionCardState extends ConsumerState<SuggestionCard> with WidgetsBindingObserver {
+class _SuggestionState extends ConsumerState<Suggestion> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -188,25 +203,31 @@ class _SuggestionCardState extends ConsumerState<SuggestionCard> with WidgetsBin
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      ref.refresh(_suggestedPlaceProvider);
+      ref.refresh(suggestedPlaceProvider);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final suggestedPlace = ref.watch(_suggestedPlaceProvider);
-    return SizedBox(
-      height: 160,
-      width: double.infinity,
-      child: Card(
-        color: Theme.of(context).colorScheme.primary,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: suggestedPlace.when(
-          data: (data) => _buildSuggestionCard(data.item1, data.item2),
-          error: (error, _) => _buildScanCard(),
-          loading: () => const CCPI(),
+    final suggestedPlace = ref.watch(suggestedPlaceProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        HomeTitle(title: 'suggestion'.tr()),
+        SizedBox(
+          height: 160,
+          width: double.infinity,
+          child: Card(
+            color: Theme.of(context).colorScheme.primary,
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: suggestedPlace.when(
+              data: (data) => _buildSuggestionCard(data.item1, data.item2),
+              error: (error, _) => _buildScanCard(),
+              loading: () => const CCPI(),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -239,7 +260,7 @@ class _SuggestionCardState extends ConsumerState<SuggestionCard> with WidgetsBin
             ),
             const Spacer(),
             Text(
-              'meters'.plural(distance.round()),
+              'meter'.plural(distance.round()),
               style: Theme.of(context).textTheme.subtitle1!.copyWith(color: Colors.white),
             ),
           ],
