@@ -69,7 +69,7 @@ class SettingsPage extends ConsumerWidget {
           children: suggestionRangeOptions
               .map(
                 (suggestionRange) => DialogListTile(
-                  title: Text('after_minute_idle'.plural(suggestionRange)),
+                  title: Text('within_meter'.plural(suggestionRange)),
                   onTap: () => suggestionRange,
                 ),
               )
