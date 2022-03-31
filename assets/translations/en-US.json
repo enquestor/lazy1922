@@ -34,7 +34,7 @@
     "smart_suggestions_description": "Lazy1922 will automatically suggest you places according to your current location, without having to search through your whole list of favorite places.",
     "message_history": "Message History",
     "message_history_subtitle": "Check out where you have been at a glance.",
-    "message_history_description": "Lazy1922 can display the names of places in the message history, so you can easily confirm whether you have been close to someone with COVID.",
+    "message_history_description": "Lazy1922 can display the names of favorite places in the message history, so you can easily confirm whether you have been close to someone with COVID.",
     "backup_and_restore": "Backup and Restore (In Development)",
     "backup_and_restore_subtitle": "Keep all your favorite places when switching to a new phone.",
     "trial": "Trial",
