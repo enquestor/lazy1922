@@ -7,6 +7,7 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
   Box<List> get box => Hive.box<List>("places");
 
   PlacesNotifier() : super((Hive.box<List>("places").get('places') ?? []).cast<Place>());
+  PlacesNotifier.override(List<Place> places) : super(places);
 
   @override
   bool updateShouldNotify(List<Place> old, List<Place> current) => true;

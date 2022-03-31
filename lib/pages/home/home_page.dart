@@ -18,7 +18,7 @@ import 'package:tuple/tuple.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 final _isEditModeProvider = StateProvider.autoDispose<bool>((ref) => false);
-final _suggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
+final suggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
   // use toList to make full copy so that sort doesn't mess with provided list
   final places = ref.watch(placesProvider).toList();
 
@@ -188,13 +188,13 @@ class _SuggestionCardState extends ConsumerState<SuggestionCard> with WidgetsBin
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      ref.refresh(_suggestedPlaceProvider);
+      ref.refresh(suggestedPlaceProvider);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final suggestedPlace = ref.watch(_suggestedPlaceProvider);
+    final suggestedPlace = ref.watch(suggestedPlaceProvider);
     return SizedBox(
       height: 160,
       width: double.infinity,
