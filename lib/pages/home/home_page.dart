@@ -239,7 +239,7 @@ class _SuggestionCardState extends ConsumerState<SuggestionCard> with WidgetsBin
             ),
             const Spacer(),
             Text(
-              'meters'.plural(distance.round()),
+              'meter'.plural(distance.round()),
               style: Theme.of(context).textTheme.subtitle1!.copyWith(color: Colors.white),
             ),
           ],
