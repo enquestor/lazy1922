@@ -159,21 +159,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       locale: context.locale,
       routeInformationParser: _router.routeInformationParser,
       routerDelegate: _router.routerDelegate,
-      // initialUrl: '/',
-      // routes: [
-      //   VWidget(
-      //     name: 'home',
-      //     path: '/',
-      //     widget: const HomeScreen(),
-      //     stackedRoutes: [
-      //       VWidget(
-      //         name: 'premium',
-      //         path: '/premium',
-      //         widget: const PremiumScreen(),
-      //       ),
-      //     ],
-      //   ),
-      // ],
     );
   }
 }
