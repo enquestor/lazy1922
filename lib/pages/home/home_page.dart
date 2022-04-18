@@ -1,3 +1,4 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reorderable_grid_view/widgets/reorderable_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,13 +10,13 @@ import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/providers/pending_message_provider.dart';
 import 'package:lazy1922/providers/places_provider.dart';
-import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/utils.dart';
 import 'package:lazy1922/widgets/ccpi.dart';
 import 'package:lazy1922/widgets/edit_place_dialog.dart';
 import 'package:tuple/tuple.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 
 final _isEditModeProvider = StateProvider.autoDispose<bool>((ref) => false);
 final suggestedPlaceProvider = FutureProvider.autoDispose<Tuple2<Place, double>>((ref) async {
@@ -257,18 +258,15 @@ class _SuggestionState extends ConsumerState<Suggestion> with WidgetsBindingObse
       onTap: () {
         final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
         pendingMessageNotifier.state = Record.fromPlace(place);
-
-        final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
-        selectedPageNotifier.state = SelectedPage.messages;
+        context.go(EnumToString.convertToString(SelectedPage.messages));
       },
     );
   }
 
   Widget _buildScanCard() {
-    final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
     return InkWell(
       child: const Icon(Icons.camera_alt_outlined, color: Colors.white),
-      onTap: () => selectedPageNotifier.state = SelectedPage.scan,
+      onTap: () => context.go(EnumToString.convertToString(SelectedPage.scan)),
     );
   }
 }
@@ -325,9 +323,7 @@ class PlaceCard extends ConsumerWidget {
     } else {
       final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
       pendingMessageNotifier.state = Record.fromPlace(place);
-
-      final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
-      selectedPageNotifier.state = SelectedPage.messages;
+      context.go(EnumToString.convertToString(SelectedPage.messages));
     }
   }
 

@@ -6,8 +6,8 @@ import 'package:lazy1922/widgets/dialog_list_tile.dart';
 import 'package:lazy1922/widgets/settings_item.dart';
 import 'package:lazy1922/widgets/settings_title.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vrouter/vrouter.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -29,7 +29,7 @@ class SettingsPage extends ConsumerWidget {
           SettingsTitle(title: 'user'.tr()),
           SettingsItem(
             title: 'lazy1922_premium'.tr(),
-            onTap: () => context.vRouter.toNamed('premium'),
+            onTap: () => context.push('/settings/premium'),
           ),
           SettingsItem(
             title: 'language'.tr(),

@@ -197,6 +197,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.2"
+  enum_to_string:
+    dependency: "direct main"
+    description:
+      name: enum_to_string
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   equatable:
     dependency: transitive
     description:
@@ -364,6 +371,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  go_router:
+    dependency: "direct main"
+    description:
+      name: go_router
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.7"
   graphs:
     dependency: transitive
     description:
@@ -490,13 +504,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  move_to_background:
-    dependency: transitive
-    description:
-      name: move_to_background
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
   package_config:
     dependency: transitive
     description:
@@ -894,13 +901,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
-  url_strategy:
-    dependency: transitive
-    description:
-      name: url_strategy
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
   vector_math:
     dependency: transitive
     description:
@@ -908,13 +908,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
-  vrouter:
-    dependency: "direct main"
-    description:
-      name: vrouter
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.0+21"
   watcher:
     dependency: transitive
     description:

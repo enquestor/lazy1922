@@ -1,23 +1,24 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
+import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/models/user.dart';
 import 'package:lazy1922/providers/inactive_start_time_provider.dart';
-import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/screens/home_screen.dart';
 import 'package:lazy1922/screens/premium_screen.dart';
 import 'package:lazy1922/theme.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:vrouter/vrouter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,7 +90,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       final user = ref.read(userProvider);
       final inactiveStartTime = ref.read(inactiveStartTimeProvider);
       if (DateTime.now().difference(inactiveStartTime).inMinutes >= user.autoReturn) {
-        ref.refresh(selectedPageProvider);
+        context.go('/home');
       }
     } else if (state == AppLifecycleState.paused) {
       final inactiveStartTimeNotifier = ref.read(inactiveStartTimeProvider.notifier);
@@ -97,9 +98,36 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     }
   }
 
+  final _router = GoRouter(
+    initialLocation: '/home',
+    routes: [
+      GoRoute(
+        path: '/:selectedPage',
+        builder: (_, state) {
+          final selectedPage = EnumToString.fromString(SelectedPage.values, state.params['selectedPage']!)!;
+          return HomeScreen(selectedPage: selectedPage);
+        },
+        redirect: (state) {
+          final selectedPageMatch = SelectedPage.values.where((e) => EnumToString.convertToString(e) == state.params['selectedPage']);
+          if (selectedPageMatch.isEmpty || selectedPageMatch.length != 1) {
+            return '/home';
+          } else {
+            return null;
+          }
+        },
+        routes: [
+          GoRoute(
+            path: 'premium',
+            builder: (_, __) => const PremiumScreen(),
+          ),
+        ],
+      ),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
-    return VRouter(
+    return MaterialApp.router(
       title: 'Lazy1922',
       theme: ThemeData(
         brightness: Brightness.light,
@@ -129,21 +157,23 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      initialUrl: '/',
-      routes: [
-        VWidget(
-          name: 'home',
-          path: '/',
-          widget: const HomeScreen(),
-          stackedRoutes: [
-            VWidget(
-              name: 'premium',
-              path: '/premium',
-              widget: const PremiumScreen(),
-            ),
-          ],
-        ),
-      ],
+      routeInformationParser: _router.routeInformationParser,
+      routerDelegate: _router.routerDelegate,
+      // initialUrl: '/',
+      // routes: [
+      //   VWidget(
+      //     name: 'home',
+      //     path: '/',
+      //     widget: const HomeScreen(),
+      //     stackedRoutes: [
+      //       VWidget(
+      //         name: 'premium',
+      //         path: '/premium',
+      //         widget: const PremiumScreen(),
+      //       ),
+      //     ],
+      //   ),
+      // ],
     );
   }
 }
