@@ -70,7 +70,7 @@ class SettingsPage extends ConsumerWidget {
               .map(
                 (suggestionRange) => DialogListTile(
                   title: Text('within_meter'.plural(suggestionRange)),
-                  onTap: () => suggestionRange,
+                  onTap: () => Navigator.of(context).pop(suggestionRange),
                 ),
               )
               .toList()),
