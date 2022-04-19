@@ -1,10 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/screens/premium_screen.dart';
 import 'package:lazy1922/widgets/feature.dart';
@@ -115,12 +117,12 @@ class IntroductionScreen extends ConsumerWidget {
             userNotifier.setNotNewUser();
           }
 
-          context.go('/home');
+          context.go('/${EnumToString.convertToString(SelectedPage.home)}');
         },
         onSkipPress: () {
           final userNotifier = ref.read(userProvider.notifier);
           userNotifier.setNotNewUser();
-          context.go('/home');
+          context.go('/${EnumToString.convertToString(SelectedPage.home)}');
         },
       ),
     );

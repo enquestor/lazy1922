@@ -129,7 +129,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       final user = ref.read(userProvider);
       final inactiveStartTime = ref.read(inactiveStartTimeProvider);
       if (DateTime.now().difference(inactiveStartTime).inMinutes >= user.autoReturn) {
-        context.go('/home');
+        context.go('/${EnumToString.convertToString(SelectedPage.home)}');
       }
     } else if (state == AppLifecycleState.paused) {
       final inactiveStartTimeNotifier = ref.read(inactiveStartTimeProvider.notifier);

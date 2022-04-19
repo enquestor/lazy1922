@@ -47,7 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         );
 
         if (goPurchase != null && goPurchase) {
-          context.go('/settings/premium');
+          context.go('/${EnumToString.convertToString(SelectedPage.settings)}/premium');
         }
       }
     });
@@ -84,7 +84,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         try {
           context.go('/${EnumToString.convertToString(SelectedPage.values[user.isPremium ? value : value + 1])}');
         } catch (e) {
-          context.go('/scan');
+          context.go('/${EnumToString.convertToString(SelectedPage.scan)}');
         }
       },
       destinations: [

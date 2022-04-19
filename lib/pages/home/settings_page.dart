@@ -1,6 +1,8 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/consts.dart';
+import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/widgets/dialog_list_tile.dart';
 import 'package:lazy1922/widgets/settings_item.dart';
@@ -29,7 +31,7 @@ class SettingsPage extends ConsumerWidget {
           SettingsTitle(title: 'user'.tr()),
           SettingsItem(
             title: 'lazy1922_premium'.tr(),
-            onTap: () => context.push('/settings/premium'),
+            onTap: () => context.push('/${EnumToString.convertToString(SelectedPage.settings)}/premium'),
           ),
           SettingsItem(
             title: 'language'.tr(),
