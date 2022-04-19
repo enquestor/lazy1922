@@ -10,20 +10,59 @@ import 'package:lazy1922/providers/user_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   final SelectedPage selectedPage;
   const HomeScreen({Key? key, required this.selectedPage}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      final user = ref.read(userProvider);
+      if (user.isTrialEnded && !user.isTrialEndMessageShown) {
+        final userNotifier = ref.read(userProvider.notifier);
+        userNotifier.setTrialEndedMessageShown();
+
+        final goPurchase = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('trial_ended'.tr()),
+            content: Text('trial_ended_message'.tr()),
+            actions: [
+              TextButton(
+                child: Text('no'.tr()),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: Text('sure'.tr()),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ],
+          ),
+        );
+
+        if (goPurchase != null && goPurchase) {
+          context.go('/settings/premium');
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildBody(ref),
-      bottomNavigationBar: _buildNavigationBar(context, ref),
+      body: _buildBody(),
+      bottomNavigationBar: _buildNavigationBar(),
     );
   }
 
-  Widget _buildBody(WidgetRef ref) {
-    switch (selectedPage) {
+  Widget _buildBody() {
+    switch (widget.selectedPage) {
       case SelectedPage.home:
         return const HomePage();
       case SelectedPage.scan:
@@ -35,13 +74,19 @@ class HomeScreen extends ConsumerWidget {
     }
   }
 
-  Widget _buildNavigationBar(BuildContext context, WidgetRef ref) {
+  Widget _buildNavigationBar() {
     final user = ref.watch(userProvider);
-    final selectedPageIndex = SelectedPage.values.indexOf(selectedPage);
+    final selectedPageIndex = SelectedPage.values.indexOf(widget.selectedPage);
 
     return NavigationBar(
       selectedIndex: user.isPremium ? selectedPageIndex : selectedPageIndex - 1,
-      onDestinationSelected: (value) => context.go('/${EnumToString.convertToString(SelectedPage.values[user.isPremium ? value : value + 1])}'),
+      onDestinationSelected: (value) {
+        try {
+          context.go('/${EnumToString.convertToString(SelectedPage.values[user.isPremium ? value : value + 1])}');
+        } catch (e) {
+          context.go('/scan');
+        }
+      },
       destinations: [
         if (user.isPremium)
           NavigationDestination(

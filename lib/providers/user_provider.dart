@@ -46,6 +46,10 @@ class UserNotifer extends StateNotifier<User> {
   void setNotNewUser() {
     state = state.copyWith();
   }
+
+  void setTrialEndedMessageShown() {
+    state = state.copyWith(isTrialEndMessageShown: true);
+  }
 }
 
 final userProvider = StateNotifierProvider<UserNotifer, User>((ref) => UserNotifer());
