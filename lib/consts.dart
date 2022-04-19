@@ -6,4 +6,5 @@ const defaultSuggestionRange = 100;
 const suggestionRangeOptions = [50, 100, 200];
 const defaultAutoReturn = 1;
 const autoReturnOptions = [1, 5, 10];
+const autoReturnMaxTime = 999999999999;
 const privacyPolicyLink = 'https://lazy1922.enquestor.com/privacy/';
