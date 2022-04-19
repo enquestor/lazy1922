@@ -40,7 +40,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               TextButton(
                 child: Text('sure'.tr()),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(context).pop(true),
               ),
             ],
           ),
@@ -80,7 +80,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return NavigationBar(
       selectedIndex: user.isPremium ? selectedPageIndex : selectedPageIndex - 1,
-      onDestinationSelected: (value) => context.go('/${EnumToString.convertToString(SelectedPage.values[user.isPremium ? value : value + 1])}'),
+      onDestinationSelected: (value) {
+        try {
+          context.go('/${EnumToString.convertToString(SelectedPage.values[user.isPremium ? value : value + 1])}');
+        } catch (e) {
+          context.go('/scan');
+        }
+      },
       destinations: [
         if (user.isPremium)
           NavigationDestination(
