@@ -69,5 +69,7 @@
     "try_lazy1922_premium": "Try Lazy1922 Premium",
     "try_lazy1922_premium_message": "Do you want to start the trial session?\n\nAll premium features will be unlocked during trial. The trial session will end automatically 7 days later, and will not start charging you automatically.",
     "sure": "Sure!",
-    "no": "No Thanks"
+    "no": "No Thanks",
+    "trial_ended": "Trial Ended",
+    "trial_ended_message": "Your trial session has ended, thanks for trying out. If you like Lazy1922, please consider upgrading to Lazy1922 Premium and sharing it with your friends!"
 }
