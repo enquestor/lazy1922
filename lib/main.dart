@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,12 +10,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
-import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/models/user.dart';
 import 'package:lazy1922/providers/inactive_start_time_provider.dart';
+import 'package:lazy1922/providers/router_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
-import 'package:lazy1922/screens/home_screen.dart';
-import 'package:lazy1922/screens/premium_screen.dart';
 import 'package:lazy1922/theme.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
@@ -36,7 +33,7 @@ void main() async {
     EasyLocalization.ensureInitialized(),
   ]);
 
-  Purchases.setDebugLogsEnabled(true);
+  // Purchases.setDebugLogsEnabled(true);
 
   if (Platform.isAndroid) {
     Purchases.setup(dotenv.env['PUBLIC_GOOGLE_SDK_KEY']!);
@@ -98,35 +95,9 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  final _router = GoRouter(
-    initialLocation: '/home',
-    routes: [
-      GoRoute(
-        path: '/:selectedPage',
-        builder: (_, state) {
-          final selectedPage = EnumToString.fromString(SelectedPage.values, state.params['selectedPage']!)!;
-          return HomeScreen(selectedPage: selectedPage);
-        },
-        redirect: (state) {
-          final selectedPageMatch = SelectedPage.values.where((e) => EnumToString.convertToString(e) == state.params['selectedPage']);
-          if (selectedPageMatch.isEmpty || selectedPageMatch.length != 1) {
-            return '/home';
-          } else {
-            return null;
-          }
-        },
-        routes: [
-          GoRoute(
-            path: 'premium',
-            builder: (_, __) => const PremiumScreen(),
-          ),
-        ],
-      ),
-    ],
-  );
-
   @override
   Widget build(BuildContext context) {
+    final router = ref.watch(routerProvider);
     return MaterialApp.router(
       title: 'Lazy1922',
       theme: ThemeData(
@@ -157,8 +128,8 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      routeInformationParser: _router.routeInformationParser,
-      routerDelegate: _router.routerDelegate,
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
     );
   }
 }
