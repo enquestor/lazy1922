@@ -66,39 +66,41 @@ class FeatureTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Opacity(
       opacity: onTap == null ? 0.5 : 1,
-      child: InkWell(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(leading, color: Colors.grey.shade700),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 18),
-                      ),
-                      Text(
-                        subtitle,
-                        style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 14),
-                      ),
-                    ],
+      child: Material(
+        child: InkWell(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(leading, color: Colors.grey.shade700),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 18),
+                        ),
+                        Text(
+                          subtitle,
+                          style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 14),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey.shade700,
-              ),
-            ],
+                Icon(
+                  Icons.chevron_right,
+                  color: Colors.grey.shade700,
+                ),
+              ],
+            ),
           ),
+          onTap: onTap,
         ),
-        onTap: onTap,
       ),
     );
   }

@@ -1,12 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/providers/pending_message_provider.dart';
-import 'package:lazy1922/providers/selected_page_provider.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:go_router/go_router.dart';
 
 class ScanPage extends ConsumerWidget {
   const ScanPage({Key? key}) : super(key: key);
@@ -17,12 +18,12 @@ class ScanPage extends ConsumerWidget {
       appBar: AppBar(title: Text('scan'.tr())),
       body: MobileScanner(
         allowDuplicates: false,
-        onDetect: (barcode, args) => _onNewScan(ref, barcode),
+        onDetect: (barcode, args) => _onNewScan(context, ref, barcode),
       ),
     );
   }
 
-  void _onNewScan(WidgetRef ref, Barcode barcode) async {
+  void _onNewScan(BuildContext context, WidgetRef ref, Barcode barcode) async {
     // ignore if not sms code
     if (barcode.sms == null) {
       return;
@@ -44,7 +45,6 @@ class ScanPage extends ConsumerWidget {
     );
 
     // change page to messages
-    final selectedPageNotifier = ref.read(selectedPageProvider.notifier);
-    selectedPageNotifier.state = SelectedPage.messages;
+    context.go(EnumToString.convertToString(SelectedPage.messages));
   }
 }

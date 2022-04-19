@@ -14,11 +14,14 @@ class User {
   @HiveField(3, defaultValue: defaultAutoReturn)
   final int autoReturn;
 
+  final bool isNewUser;
+
   const User({
     required this.isRealPremium,
     required this.suggestionRange,
     this.trial,
     required this.autoReturn,
+    this.isNewUser = false,
   });
 
   factory User.template() {
@@ -26,6 +29,7 @@ class User {
       isRealPremium: false,
       suggestionRange: defaultSuggestionRange,
       autoReturn: defaultAutoReturn,
+      isNewUser: true,
     );
   }
 

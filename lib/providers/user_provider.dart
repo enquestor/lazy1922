@@ -42,6 +42,10 @@ class UserNotifer extends StateNotifier<User> {
   void fakeUpgrade() {
     state = state.copyWith(isRealPremium: true);
   }
+
+  void setNotNewUser() {
+    state = state.copyWith();
+  }
 }
 
 final userProvider = StateNotifierProvider<UserNotifer, User>((ref) => UserNotifer());

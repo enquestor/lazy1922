@@ -5,19 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lazy1922/models/code.dart';
 import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/user.dart';
 import 'package:lazy1922/providers/inactive_start_time_provider.dart';
-import 'package:lazy1922/providers/selected_page_provider.dart';
+import 'package:lazy1922/providers/router_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
-import 'package:lazy1922/screens/home_screen.dart';
-import 'package:lazy1922/screens/premium_screen.dart';
 import 'package:lazy1922/theme.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:vrouter/vrouter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +33,7 @@ void main() async {
     EasyLocalization.ensureInitialized(),
   ]);
 
-  Purchases.setDebugLogsEnabled(true);
+  // Purchases.setDebugLogsEnabled(true);
 
   if (Platform.isAndroid) {
     Purchases.setup(dotenv.env['PUBLIC_GOOGLE_SDK_KEY']!);
@@ -89,7 +87,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       final user = ref.read(userProvider);
       final inactiveStartTime = ref.read(inactiveStartTimeProvider);
       if (DateTime.now().difference(inactiveStartTime).inMinutes >= user.autoReturn) {
-        ref.refresh(selectedPageProvider);
+        context.go('/home');
       }
     } else if (state == AppLifecycleState.paused) {
       final inactiveStartTimeNotifier = ref.read(inactiveStartTimeProvider.notifier);
@@ -99,7 +97,8 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return VRouter(
+    final router = ref.watch(routerProvider);
+    return MaterialApp.router(
       title: 'Lazy1922',
       theme: ThemeData(
         brightness: Brightness.light,
@@ -129,21 +128,8 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      initialUrl: '/',
-      routes: [
-        VWidget(
-          name: 'home',
-          path: '/',
-          widget: const HomeScreen(),
-          stackedRoutes: [
-            VWidget(
-              name: 'premium',
-              path: '/premium',
-              widget: const PremiumScreen(),
-            ),
-          ],
-        ),
-      ],
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
     );
   }
 }

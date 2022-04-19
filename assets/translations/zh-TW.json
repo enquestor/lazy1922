@@ -62,5 +62,13 @@
     "language": "語言",
     "zh_TW": "中文 (繁體)",
     "en_US": "英文 (美國)",
-    "auto_return": "自動跳回預設頁面"
+    "auto_return": "自動跳回預設頁面",
+    "welcome_to_lazy1922": "歡迎使用懶人實聯制！",
+    "no_ads": "無廣告",
+    "1922_qr_codes_only": "只掃實聯制，防止誤掃",
+    "send_immediately": "掃描後立即傳送",
+    "try_lazy1922_premium": "試用超級懶人實聯制",
+    "try_lazy1922_premium_message": "是否開始試用超級懶人實聯制？\n\n試用期間可以使用所有付費功能，並且會在七天後自動取消，並不會自動收費。",
+    "sure": "當然！",
+    "no": "不用了"
 }

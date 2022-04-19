@@ -10,8 +10,8 @@ import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/widgets/feature.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:vrouter/vrouter.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 
 final _packageProvider = FutureProvider.autoDispose<Package>((ref) async {
   Offerings offerings = await Purchases.getOfferings();
@@ -63,7 +63,7 @@ class PremiumScreen extends ConsumerWidget {
       leading: IconButton(
         icon: const Icon(Icons.chevron_left, color: Colors.white),
         splashRadius: 20,
-        onPressed: () => context.vRouter.pop(),
+        onPressed: () => context.pop(),
       ),
       backgroundColor: Theme.of(context).colorScheme.primary,
       flexibleSpace: Container(
