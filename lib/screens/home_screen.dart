@@ -36,36 +36,31 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildNavigationBar(BuildContext context, WidgetRef ref) {
-    var destinations = [
-      NavigationDestination(
-        icon: const Icon(Icons.camera_alt_outlined),
-        label: 'scan'.tr(),
-      ),
-      NavigationDestination(
-        icon: const Icon(Icons.message_outlined),
-        label: 'messages'.tr(),
-      ),
-      NavigationDestination(
-        icon: const Icon(Icons.settings_outlined),
-        label: 'settings'.tr(),
-      ),
-    ];
     final user = ref.watch(userProvider);
-
-    if (user.isPremium) {
-      destinations = [
-        NavigationDestination(
-          icon: const Icon(Icons.home_outlined),
-          label: 'home'.tr(),
-        ),
-        ...destinations,
-      ];
-    }
+    final selectedPageIndex = SelectedPage.values.indexOf(selectedPage);
 
     return NavigationBar(
-      selectedIndex: SelectedPage.values.indexOf(selectedPage),
-      onDestinationSelected: (value) => context.go('/${EnumToString.convertToString(SelectedPage.values[value])}'),
-      destinations: destinations,
+      selectedIndex: user.isPremium ? selectedPageIndex : selectedPageIndex - 1,
+      onDestinationSelected: (value) => context.go('/${EnumToString.convertToString(SelectedPage.values[user.isPremium ? value : value + 1])}'),
+      destinations: [
+        if (user.isPremium)
+          NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            label: 'home'.tr(),
+          ),
+        NavigationDestination(
+          icon: const Icon(Icons.camera_alt_outlined),
+          label: 'scan'.tr(),
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.message_outlined),
+          label: 'messages'.tr(),
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.settings_outlined),
+          label: 'settings'.tr(),
+        ),
+      ],
     );
   }
 }

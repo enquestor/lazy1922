@@ -62,5 +62,12 @@
     "language": "Language",
     "zh_TW": "Chinese (Traditional)",
     "en_US": "English (US)",
-    "auto_return": "Return to Default Page"
- }
+    "auto_return": "Return to Default Page",
+    "no_ads": "No Ads",
+    "1922_qr_codes_only": "Scan 1922 QR Codes Only",
+    "send_immediately": "Send immediately after scanning",
+    "try_lazy1922_premium": "Try Lazy1922 Premium",
+    "try_lazy1922_premium_message": "Do you want to start the trial session?\n\nAll premium features will be unlocked during trial. The trial session will end automatically 7 days later, and will not start charging you automatically.",
+    "sure": "Sure!",
+    "no": "No Thanks"
+}

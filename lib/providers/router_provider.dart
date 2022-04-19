@@ -9,7 +9,7 @@ import 'package:lazy1922/screens/premium_screen.dart';
 
 final routerProvider = Provider<GoRouter>(
   (ref) => GoRouter(
-    initialLocation: '/introduction',
+    initialLocation: '/home',
     // debugLogDiagnostics: true,
     routes: [
       GoRoute(
@@ -27,6 +27,10 @@ final routerProvider = Provider<GoRouter>(
           final user = ref.watch(userProvider);
           if (user.isNewUser && state.params['page'] != 'introduction') {
             return '/introduction';
+          }
+
+          if (!user.isPremium && state.params['page'] == 'home') {
+            return '/scan';
           }
         },
         routes: [
