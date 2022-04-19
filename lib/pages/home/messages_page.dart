@@ -213,7 +213,7 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
                             shouldShowPlaceName
                                 ? const Padding(
                                     padding: EdgeInsets.only(left: 4, right: 12, top: 6, bottom: 2),
-                                    child: Icon(Icons.location_on_outlined),
+                                    child: Icon(Icons.location_on_outlined, color: Colors.white),
                                   )
                                 : const SizedBox(),
                             Expanded(
