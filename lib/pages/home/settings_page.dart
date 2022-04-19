@@ -37,7 +37,7 @@ class SettingsPage extends ConsumerWidget {
           ),
           SettingsItem(
             title: 'auto_return'.tr(),
-            value: 'after_minute_idle'.plural(user.autoReturn),
+            value: user.autoReturn == autoReturnMaxTime ? 'never'.tr() : 'after_minute_idle'.plural(user.autoReturn),
             onTap: () => _onAutoReturnTap(context, ref),
           ),
           SettingsTitle(title: 'premium_settings'.tr()),
@@ -117,7 +117,7 @@ class SettingsPage extends ConsumerWidget {
               )),
           DialogListTile(
             title: Text('never'.tr()),
-            onTap: () => Navigator.of(context).pop(999999999999),
+            onTap: () => Navigator.of(context).pop(autoReturnMaxTime),
           ),
         ],
       ),
