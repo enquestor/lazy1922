@@ -258,7 +258,7 @@ class _SuggestionState extends ConsumerState<Suggestion> with WidgetsBindingObse
       onTap: () {
         final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
         pendingMessageNotifier.state = Record.fromPlace(place);
-        context.go(EnumToString.convertToString(SelectedPage.messages));
+        context.go('/${EnumToString.convertToString(SelectedPage.messages)}');
       },
     );
   }
@@ -266,7 +266,7 @@ class _SuggestionState extends ConsumerState<Suggestion> with WidgetsBindingObse
   Widget _buildScanCard() {
     return InkWell(
       child: const Icon(Icons.camera_alt_outlined, color: Colors.white),
-      onTap: () => context.go(EnumToString.convertToString(SelectedPage.scan)),
+      onTap: () => context.go('/${EnumToString.convertToString(SelectedPage.scan)}'),
     );
   }
 }
@@ -323,7 +323,7 @@ class PlaceCard extends ConsumerWidget {
     } else {
       final pendingMessageNotifier = ref.read(pendingMessageProvider.notifier);
       pendingMessageNotifier.state = Record.fromPlace(place);
-      context.go(EnumToString.convertToString(SelectedPage.messages));
+      context.go('/${EnumToString.convertToString(SelectedPage.messages)}');
     }
   }
 

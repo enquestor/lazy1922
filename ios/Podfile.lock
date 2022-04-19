@@ -57,8 +57,6 @@ PODS:
   - mobile_scanner (0.0.1):
     - Flutter
     - GoogleMLKit/BarcodeScanning (~> 2.6.0)
-  - move_to_background (0.0.1):
-    - Flutter
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -88,7 +86,6 @@ DEPENDENCIES:
   - flutter_sms (from `.symlinks/plugins/flutter_sms/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - mobile_scanner (from `.symlinks/plugins/mobile_scanner/ios`)
-  - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
@@ -123,8 +120,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   mobile_scanner:
     :path: ".symlinks/plugins/mobile_scanner/ios"
-  move_to_background:
-    :path: ".symlinks/plugins/move_to_background/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   purchases_flutter:
@@ -151,7 +146,6 @@ SPEC CHECKSUMS:
   MLKitCommon: 3bc17c6f7d25ce3660f030350b46ae7ec9ebca6e
   MLKitVision: e87dc3f2e456a6ab32361ebd985e078dd2746143
   mobile_scanner: 073e39c0c96360297389f4db68e4297a1fa58349
-  move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58

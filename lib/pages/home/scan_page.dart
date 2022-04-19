@@ -45,6 +45,6 @@ class ScanPage extends ConsumerWidget {
     );
 
     // change page to messages
-    context.go(EnumToString.convertToString(SelectedPage.messages));
+    context.go('/${EnumToString.convertToString(SelectedPage.messages)}');
   }
 }

@@ -49,7 +49,7 @@ class User {
       suggestionRange: suggestionRange ?? this.suggestionRange,
       trial: trial ?? this.trial,
       autoReturn: autoReturn ?? this.autoReturn,
-      isTrialEndMessageShown: this.isTrialEndMessageShown,
+      isTrialEndMessageShown: isTrialEndMessageShown ?? this.isTrialEndMessageShown,
     );
   }
 
