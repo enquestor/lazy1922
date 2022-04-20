@@ -113,10 +113,9 @@ class IntroductionScreen extends ConsumerWidget {
           if (useTrial!) {
             userNotifier.startTrial();
             Geolocator.requestPermission();
-          } else {
-            userNotifier.setNotNewUser();
           }
 
+          userNotifier.setNotNewUser();
           context.go('/${EnumToString.convertToString(SelectedPage.home)}');
         },
         onSkipPress: () {
