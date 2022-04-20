@@ -15,7 +15,7 @@ class User {
   final int autoReturn;
   @HiveField(4, defaultValue: false)
   final bool isTrialEndMessageShown;
-
+  @HiveField(5, defaultValue: true)
   final bool isNewUser;
 
   const User({
@@ -24,7 +24,7 @@ class User {
     this.trial,
     required this.autoReturn,
     required this.isTrialEndMessageShown,
-    this.isNewUser = false,
+    required this.isNewUser,
   });
 
   factory User.template() {
@@ -43,6 +43,7 @@ class User {
     DateTime? trial,
     int? autoReturn,
     bool? isTrialEndMessageShown,
+    bool? isNewUser,
   }) {
     return User(
       isRealPremium: isRealPremium ?? this.isRealPremium,
@@ -50,6 +51,7 @@ class User {
       trial: trial ?? this.trial,
       autoReturn: autoReturn ?? this.autoReturn,
       isTrialEndMessageShown: isTrialEndMessageShown ?? this.isTrialEndMessageShown,
+      isNewUser: isNewUser ?? this.isNewUser,
     );
   }
 

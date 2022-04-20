@@ -71,5 +71,8 @@
     "sure": "Sure!",
     "no": "No Thanks",
     "trial_ended": "Trial Ended",
-    "trial_ended_message": "Your trial session has ended, thanks for trying out. If you like Lazy1922, please consider upgrading to Lazy1922 Premium and sharing it with your friends!"
+    "trial_ended_message": "Your trial session has ended, thanks for trying out. If you like Lazy1922, please consider upgrading to Lazy1922 Premium and sharing it with your friends!",
+    "skip": "SKIP",
+    "next": "NEXT",
+    "done": "DONE"
 }
