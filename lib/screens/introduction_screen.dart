@@ -89,6 +89,18 @@ class IntroductionScreen extends ConsumerWidget {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           ),
         ],
+        renderSkipBtn: Text(
+          'skip'.tr(),
+          style: Theme.of(context).textTheme.button,
+        ),
+        renderNextBtn: Text(
+          'next'.tr(),
+          style: Theme.of(context).textTheme.button,
+        ),
+        renderDoneBtn: Text(
+          'done'.tr(),
+          style: Theme.of(context).textTheme.button,
+        ),
         onDonePress: () async {
           final useTrial = await showDialog<bool>(
             barrierDismissible: false,
