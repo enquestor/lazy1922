@@ -124,6 +124,7 @@ class SettingsPage extends ConsumerWidget {
         ],
       ),
     );
+
     if (result != null) {
       final userNotifier = ref.watch(userProvider.notifier);
       userNotifier.setAutoReturn(result);
