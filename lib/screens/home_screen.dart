@@ -6,6 +6,7 @@ import 'package:lazy1922/pages/home/home_page.dart';
 import 'package:lazy1922/pages/home/messages_page.dart';
 import 'package:lazy1922/pages/home/scan_page.dart';
 import 'package:lazy1922/pages/home/settings_page.dart';
+import 'package:lazy1922/providers/inactive_start_time_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:go_router/go_router.dart';
@@ -18,10 +19,15 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+
+    // callback hook for app state changes
+    WidgetsBinding.instance!.addObserver(this);
+
+    // popup for trial end message
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       final user = ref.read(userProvider);
       if (user.isTrialEnded && !user.isTrialEndMessageShown) {
@@ -51,6 +57,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }
       }
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final user = ref.read(userProvider);
+      final inactiveStartTime = ref.read(inactiveStartTimeProvider);
+      if (DateTime.now().difference(inactiveStartTime).inMinutes >= user.autoReturn) {
+        if (user.isPremium) {
+          context.go('/${EnumToString.convertToString(SelectedPage.home)}');
+        } else {
+          context.go('/${EnumToString.convertToString(SelectedPage.scan)}');
+        }
+      }
+    } else if (state == AppLifecycleState.paused) {
+      final inactiveStartTimeNotifier = ref.read(inactiveStartTimeProvider.notifier);
+      inactiveStartTimeNotifier.state = DateTime.now();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
   }
 
   @override

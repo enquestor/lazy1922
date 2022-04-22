@@ -72,13 +72,12 @@ class MyApp extends ConsumerStatefulWidget {
   ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends ConsumerState<MyApp> {
   late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
     _router = GoRouter(
       initialLocation: '/home',
       // debugLogDiagnostics: true,
@@ -115,26 +114,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      final user = ref.read(userProvider);
-      final inactiveStartTime = ref.read(inactiveStartTimeProvider);
-      if (DateTime.now().difference(inactiveStartTime).inMinutes >= user.autoReturn) {
-        context.go('/${EnumToString.convertToString(SelectedPage.home)}');
-      }
-    } else if (state == AppLifecycleState.paused) {
-      final inactiveStartTimeNotifier = ref.read(inactiveStartTimeProvider.notifier);
-      inactiveStartTimeNotifier.state = DateTime.now();
-    }
   }
 
   @override
