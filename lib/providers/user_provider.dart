@@ -43,10 +43,6 @@ class UserNotifer extends StateNotifier<User> {
     state = state.copyWith(trial: DateTime.now().add(const Duration(days: trialDays)));
   }
 
-  void fakeUpgrade() {
-    state = state.copyWith(isRealPremium: true);
-  }
-
   void setNotNewUser() {
     state = state.copyWith(isNewUser: false);
   }

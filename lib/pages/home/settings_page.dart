@@ -132,36 +132,15 @@ class SettingsPage extends ConsumerWidget {
   }
 }
 
-class AboutDialog extends ConsumerStatefulWidget {
+class AboutDialog extends StatelessWidget {
   const AboutDialog({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<AboutDialog> createState() => _AboutDialogState();
-}
-
-class _AboutDialogState extends ConsumerState<AboutDialog> {
-  int _count = 0;
-
-  @override
   Widget build(BuildContext context) {
-    final userNotifer = ref.watch(userProvider.notifier);
     return AlertDialog(
       title: Text('about'.tr()),
       content: Text('about_message'.tr()),
       actions: [
-        Opacity(
-          opacity: 0,
-          child: TextButton(
-            child: const Text('gogo'),
-            onPressed: () {
-              setState(() => _count++);
-              if (_count == 5) {
-                userNotifer.fakeUpgrade();
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        ),
         TextButton(
           child: Text('ok'.tr()),
           onPressed: () => Navigator.of(context).pop(),
