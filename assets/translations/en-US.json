@@ -63,6 +63,7 @@
     "zh_TW": "Chinese (Traditional)",
     "en_US": "English (US)",
     "auto_return": "Return to Default Page",
+    "welcome_to_lazy1922": "Welcome to Lazy1922!",
     "no_ads": "No Ads",
     "1922_qr_codes_only": "Scan 1922 QR Codes Only",
     "send_immediately": "Send immediately after scanning",
@@ -80,5 +81,7 @@
     "messages_info": "Only messages with location information can be added to favorites. If all sent messages do not contain location information, please try to enable location permissions in your system settings.",
     "with_location_info": "With location information",
     "without_location_info": "Without location information",
-    "home_info": "Clicking the edit button would allow you to reorder your favorites.\n\nClick on any card to send a 1922 message.\n\nIf there are no favorite places in range, clicking on \"Suggestion\" would bring you to scan page."
+    "home_info": "Clicking the edit button would allow you to reorder your favorites.\n\nClick on any card to send a 1922 message.\n\nIf there are no favorite places in range, clicking on \"Suggestion\" would bring you to scan page.",
+    "advanced_features": "Advanced Features",
+    "advanced_features_description": "Unlock advanced features to avoid scanning QR codes while complying to the government's rules."
 }

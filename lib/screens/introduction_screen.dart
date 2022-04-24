@@ -48,7 +48,7 @@ class IntroductionScreen extends ConsumerWidget {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           ),
           Slide(
-            title: '進階功能',
+            title: 'advanced_features'.tr(),
             centerWidget: SingleChildScrollView(
               child: Column(
                 children: [
@@ -56,7 +56,7 @@ class IntroductionScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     height: 180,
                     child: Text(
-                      '購買付費版本解鎖進階功能，讓你在符合政府規範下，實現「完全不掃」實聯制！',
+                      'advanced_features_description'.tr(),
                       style: Theme.of(context).textTheme.headline6,
                     ),
                   ),
@@ -155,7 +155,12 @@ class CheckRow extends StatelessWidget {
             size: 32,
           ),
           const SizedBox(width: 24),
-          Text(title, style: Theme.of(context).textTheme.headline6),
+          Flexible(
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ),
         ],
       ),
     );
