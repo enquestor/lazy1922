@@ -122,31 +122,37 @@ class Favorites extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final places = ref.watch(placesProvider);
     final isEditMode = ref.watch(_isEditModeProvider);
-    return ReorderableBuilder(
-      enableDraggable: isEditMode,
-      enableLongPress: true,
-      dragChildBoxDecoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      children: List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList()),
-      onReorder: (orderUpdateEntities) {
-        final placesNotifier = ref.read(placesProvider.notifier);
-        for (var entity in orderUpdateEntities) {
-          placesNotifier.move(entity.oldIndex, entity.newIndex);
-        }
-      },
-      builder: (children, scrollController) => GridView(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        controller: scrollController,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1.4,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 4,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        HomeTitle(title: 'favorites'.tr()),
+        ReorderableBuilder(
+          enableDraggable: isEditMode,
+          enableLongPress: true,
+          dragChildBoxDecoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          children: List<Widget>.from(places.map((place) => PlaceCard(key: Key(place.hashCode.toString()), place: place)).toList()),
+          onReorder: (orderUpdateEntities) {
+            final placesNotifier = ref.read(placesProvider.notifier);
+            for (var entity in orderUpdateEntities) {
+              placesNotifier.move(entity.oldIndex, entity.newIndex);
+            }
+          },
+          builder: (children, scrollController) => GridView(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            controller: scrollController,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.4,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 4,
+            ),
+            children: children,
+          ),
         ),
-        children: children,
-      ),
+      ],
     );
   }
 }
