@@ -197,6 +197,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.2"
+  email_validator:
+    dependency: transitive
+    description:
+      name: email_validator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   enum_to_string:
     dependency: "direct main"
     description:
@@ -630,6 +637,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.9.5"
+  queen_validators:
+    dependency: "direct main"
+    description:
+      name: queen_validators
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   quiver:
     dependency: transitive
     description:

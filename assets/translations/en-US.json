@@ -74,5 +74,6 @@
     "trial_ended_message": "Your trial session has ended, thanks for trying out. If you like Lazy1922, please consider upgrading to Lazy1922 Premium and sharing it with your friends!",
     "skip": "SKIP",
     "next": "NEXT",
-    "done": "DONE"
+    "done": "DONE",
+    "please_enter_a_name": "Please enter a name"
 }
