@@ -56,7 +56,7 @@ void main() async {
         // Locale('ja', 'JP'),
       ],
       path: 'assets/translations',
-      fallbackLocale: const Locale('en', 'US'),
+      fallbackLocale: const Locale('zh', 'TW'),
       child: const ProviderScope(
         child: MyApp(),
       ),
