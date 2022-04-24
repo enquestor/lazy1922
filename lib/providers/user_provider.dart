@@ -27,6 +27,10 @@ class UserNotifer extends StateNotifier<User> {
     }
   }
 
+  void freeUpgrade() {
+    state = state.copyWith(isRealPremium: true);
+  }
+
   void setAutoReturn(int autoReturn) {
     state = state.copyWith(autoReturn: autoReturn);
   }
