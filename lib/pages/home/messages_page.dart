@@ -10,6 +10,7 @@ import 'package:lazy1922/providers/places_provider.dart';
 import 'package:lazy1922/providers/records_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/utils.dart';
+import 'package:lazy1922/widgets/circle.dart';
 import 'package:lazy1922/widgets/dialog_list_tile.dart';
 import 'package:lazy1922/widgets/edit_place_dialog.dart';
 
@@ -106,6 +107,44 @@ class _MessagesPageState extends ConsumerState<MessagesPage> {
     final isPlaceModeNotifier = ref.read(isPlaceModeProvider.notifier);
     return AppBar(
       title: const Text('1922'),
+      leading: IconButton(
+        icon: const Icon(Icons.info_outline),
+        onPressed: () => showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('info'.tr()),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('messages_info'.tr()),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    const Circle(),
+                    const SizedBox(width: 16),
+                    Text('with_location_info'.tr()),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Circle(filled: false),
+                    const SizedBox(width: 16),
+                    Text('without_location_info'.tr()),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                child: Text('ok'.tr()),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      ),
       actions: [
         IconButton(
           icon: Icon(

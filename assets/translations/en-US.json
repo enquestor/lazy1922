@@ -75,5 +75,9 @@
     "skip": "SKIP",
     "next": "NEXT",
     "done": "DONE",
-    "please_enter_a_name": "Please enter a name"
+    "please_enter_a_name": "Please enter a name",
+    "info": "Information",
+    "messages_info": "Only messages with location information can be added to favorites. If all sent messages do not contain location information, please try to enable location permissions in your system settings.",
+    "with_location_info": "With location information",
+    "without_location_info": "Without location information"
 }
