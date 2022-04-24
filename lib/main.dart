@@ -13,7 +13,6 @@ import 'package:lazy1922/models/place.dart';
 import 'package:lazy1922/models/record.dart';
 import 'package:lazy1922/models/selected_page.dart';
 import 'package:lazy1922/models/user.dart';
-import 'package:lazy1922/providers/inactive_start_time_provider.dart';
 import 'package:lazy1922/providers/user_provider.dart';
 import 'package:lazy1922/screens/home_screen.dart';
 import 'package:lazy1922/screens/introduction_screen.dart';
