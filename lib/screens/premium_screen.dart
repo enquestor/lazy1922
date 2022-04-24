@@ -164,25 +164,54 @@ class PremiumScreen extends ConsumerWidget {
     isPurchasingNotifier.state = true;
 
     final userNotifier = ref.read(userProvider.notifier);
-    String? errorMessage;
-    try {
-      await userNotifier.upgradeToPro(package);
-      Geolocator.requestPermission();
-    } catch (e) {
-      if (e is PlatformException) {
-        var errorCode = PurchasesErrorHelper.getErrorCode(e);
-        if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
-          errorMessage = 'purchase_cancelled'.tr();
-        } else {
-          errorMessage = 'unknown_error'.tr();
+
+    final supportDeveloper = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('upgrade'.tr()),
+        content: Text('upgrade_message'.tr()),
+        actions: [
+          TextButton(
+            child: Text('cancel'.tr()),
+            onPressed: () => Navigator.of(context).pop(null),
+          ),
+          TextButton(
+            child: Text('free_upgrade'.tr()),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          TextButton(
+            child: Text('buy_me_a_drink'.tr()),
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
+      ),
+    );
+
+    if (supportDeveloper != null) {
+      if (supportDeveloper) {
+        String? errorMessage;
+        try {
+          await userNotifier.upgradeToPro(package);
+        } catch (e) {
+          if (e is PlatformException) {
+            var errorCode = PurchasesErrorHelper.getErrorCode(e);
+            if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
+              errorMessage = 'purchase_cancelled'.tr();
+            } else {
+              errorMessage = 'unknown_error'.tr();
+            }
+          } else {
+            errorMessage = 'unknown_error'.tr();
+          }
+        }
+
+        if (errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
         }
       } else {
-        errorMessage = 'unknown_error'.tr();
+        userNotifier.freeUpgrade();
       }
-    }
-
-    if (errorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+      Geolocator.requestPermission();
     }
 
     isPurchasingNotifier.state = false;

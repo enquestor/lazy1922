@@ -27,6 +27,10 @@ class UserNotifer extends StateNotifier<User> {
     }
   }
 
+  void freeUpgrade() {
+    state = state.copyWith(isRealPremium: true);
+  }
+
   void setAutoReturn(int autoReturn) {
     state = state.copyWith(autoReturn: autoReturn);
   }
@@ -37,10 +41,6 @@ class UserNotifer extends StateNotifier<User> {
 
   void startTrial() {
     state = state.copyWith(trial: DateTime.now().add(const Duration(days: trialDays)));
-  }
-
-  void fakeUpgrade() {
-    state = state.copyWith(isRealPremium: true);
   }
 
   void setNotNewUser() {
