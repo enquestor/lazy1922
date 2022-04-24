@@ -64,21 +64,45 @@ class HomePage extends ConsumerWidget {
 
     if (showAddPlaceGuide) {
       return Scaffold(
-        appBar: _buildAppBar(),
+        appBar: _buildAppBar(context, ref),
         body: body,
         floatingActionButton: _buildFloatingActionButton(context, ref),
       );
     } else {
       return Scaffold(
-        appBar: _buildAppBar(),
+        appBar: _buildAppBar(context, ref),
         body: SingleChildScrollView(child: body),
         floatingActionButton: _buildFloatingActionButton(context, ref),
       );
     }
   }
 
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(title: Text('home'.tr()));
+  PreferredSizeWidget _buildAppBar(BuildContext context, WidgetRef ref) {
+    return AppBar(
+      title: Text('home'.tr()),
+      leading: IconButton(
+        icon: const Icon(Icons.info_outlined),
+        onPressed: () => showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('info'.tr()),
+            content: Text('home_info'.tr()),
+            actions: [
+              TextButton(
+                child: Text('ok'.tr()),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh_outlined),
+          onPressed: () => ref.refresh(suggestedPlaceProvider),
+        ),
+      ],
+    );
   }
 
   Expanded _buildAddPlaceGuide() {

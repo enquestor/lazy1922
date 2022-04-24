@@ -79,5 +79,6 @@
     "info": "Information",
     "messages_info": "Only messages with location information can be added to favorites. If all sent messages do not contain location information, please try to enable location permissions in your system settings.",
     "with_location_info": "With location information",
-    "without_location_info": "Without location information"
+    "without_location_info": "Without location information",
+    "home_info": "Clicking the edit button would allow you to reorder your favorites.\n\nClick on any card to send a 1922 message.\n\nIf there are no favorite places in range, clicking on \"Suggestion\" would bring you to scan page."
 }
